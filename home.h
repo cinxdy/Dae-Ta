@@ -15,6 +15,9 @@ public:
     explicit Home(QWidget *parent = nullptr);
     ~Home();
 
+public slots:
+    void addTable();
+
 private:
     Ui::Home *ui;
 };
