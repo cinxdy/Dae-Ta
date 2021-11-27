@@ -8,7 +8,7 @@ In IoT Design Class
 [MidReport](MidReport.pdf)  
 
 # License
-Prof. Yunseok Cho (yscho@handong.edu)
+Prof. Yunseok Cho (yscho@handong.edu)  
 Jiyoung Shin (21800409@handong.edu)  
 HyeJung Gong (21900030@handong.edu)  
 
