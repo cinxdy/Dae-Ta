@@ -16,7 +16,13 @@ public:
     ~Home();
 
 public slots:
-    void addTable();
+    void addTable(int);
+    void addTable1();
+    void addTable2();
+    void addTable3();
+    void addTable4();
+    void addTable5();
+    void addTable6();
 
 private:
     Ui::Home *ui;
