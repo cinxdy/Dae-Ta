@@ -3,6 +3,11 @@
 
 #include <QMainWindow>
 enum Location {MOVING=-1,HOME, TABLE1,TABLE2,TABLE3,TABLE4,TABLE5,TABLE6}; // 0:home -1:moving n:tableN
+class LocationXY {
+    public:
+        int x;
+        int y;
+};
 
 namespace Ui {
 class Home;
@@ -27,7 +32,8 @@ public slots:
     void addTable6();
 
     void servingStart();
-    int goToTable(int);
+    int goToTable(Location);
+    void updateLocation();
 
 private:
     Ui::Home *ui;

@@ -3,7 +3,10 @@
 
 #include <QString>
 #include <QMessageBox>
-#include<QDebug>
+#include <QDebug>
+#include <QThread>
+
+
 
 
 static QStringList qStrListOptionTable_Headers = {"TableNo","Floor"};
@@ -93,20 +96,57 @@ void Home::servingStart(){
             stateLocation = destination;
 
             do{
-                int retv=msgClearBox.warning(this, "Confirm","Did you get your plates?", QMessageBox::Cancel|QMessageBox::Ok);
+                QMessageBox msgConfirmBox;
+                int retv=msgConfirmBox.warning(this, "Confirm",QString("Hello Table%1 Did you get your plates?").arg(destination), QMessageBox::Cancel|QMessageBox::Ok);
                 if(retv==QMessageBox::Ok) break;
+            }
             while(true);
 
         }
-        
-
+    
         ui->tableServingOrder->removeRow(0);
         m_listCount--;
     }
 }
 
-int Home:goToTable(Location dest){
-    
-    
+int Home::goToTable(Location dest){
+    // location
+    // kitchen 170,200
+    // table1 340,140
+    // table2 515,140
+    // table3 690,140
+    // table4 340,250
+    // table5 515,250
+    // table6 690,250
+
+    LocationXY* destTable[7];
+    destTable[0] = new LocationXY{170,200}; // Kitchen
+    destTable[1] = new LocationXY{340,140};
+    destTable[2] = new LocationXY{515,140};
+    destTable[3] = new LocationXY{690,140};
+    destTable[4] = new LocationXY{340,250};
+    destTable[5] = new LocationXY{515,250};
+    destTable[6] = new LocationXY{690,250};
+
+    while(true){
+        if(locationX==destTable[dest]->x) break;
+        else if(locationX<destTable[dest]->x) locationX++;
+        else locationX--;
+        updateLocation();
+    }
+    while(true){
+        if(locationY==destTable[dest]->y) break;
+        else if(locationY<destTable[dest]->y) locationY++;
+        else locationY--;
+
+        updateLocation();
+    }
+
     return 1;
+}
+
+
+void Home:: updateLocation(){
+    ui->lbLocation->setGeometry(locationX,locationY,50,50);
+    QThread::msleep(1);
 }
