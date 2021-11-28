@@ -194,6 +194,7 @@ int Home::goToTable(Location dest){
 
 
 void Home:: updateLocation(){
-    ui->lbLocation->setGeometry(locationX,locationY,50,50);
-    QThread::msleep(1);
+    ui->lbLocation->move(locationX,locationY);
+    ui->lbLocation->repaint();
+    QThread::usleep(10000);
 }
