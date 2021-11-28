@@ -1,5 +1,6 @@
 #include "home.h"
 #include "ui_home.h"
+#include "payment.h"
 
 #include <QString>
 #include <QMessageBox>
@@ -7,11 +8,11 @@
 #include <QThread>
 
 
-int m_listCount;
-int locationX;
-int locationY;
-Location stateLocation; // 0:home -1:moving n:tableN
-Location destination;
+static int m_listCount;
+static int locationX;
+static int locationY;
+static Location stateLocation; // 0:home -1:moving n:tableN
+static Location destination;
 
 Home::Home(QWidget *parent) :
     QMainWindow(parent),
@@ -21,17 +22,20 @@ Home::Home(QWidget *parent) :
     locationX=170;
     locationY=200;
     stateLocation=HOME;
+    ui->lbstateLocation->setText("HOME");
+
     destination=HOME;
     
     if(stateLocation==0) ui->btnOrderOrServe->setText("Serve");
     else ui->btnOrderOrServe->setText("Order");
 
 
+
     // Serving Table
     // ui->tableServingOrder->setRowCount(10);
     ui->tableServingOrder->setColumnCount(2);
     ui->tableServingOrder->setColumnWidth(0,120);
-    ui->tableServingOrder->setColumnWidth(1,60);
+    ui->tableServingOrder->setColumnWidth(1,80);
     ui->tableServingOrder->setHorizontalHeaderLabels({"TableNo","Floor"});
     ui->tableServingOrder->setStyleSheet("QTableWidget QTableCornerButton::section {"
                                "background-color:rgb(187,187,187);"
@@ -49,6 +53,15 @@ Home::Home(QWidget *parent) :
                                "image: url(:/qt-logo.ico);"
                                "}");
 
+    ui->lbLocation->setStyleSheet("QLabel {"
+                                "border-color: rgb(66, 69, 183);"
+                                "border-width: 3px;"        
+                                "border-style: solid;"
+                                "border-radius: 30px;"
+                                "margin:10px;"
+                                // "padding:10px;"
+                                "}");
+
     ui->tableBellOrder->setRowCount(3);
     ui->tableBellOrder->setItem(0,0,new QTableWidgetItem(QString("Table3")));
     ui->tableBellOrder->setItem(1,0,new QTableWidgetItem(QString("Table4")));
@@ -62,6 +75,8 @@ Home::Home(QWidget *parent) :
     connect(ui->btnTable4, SIGNAL(clicked()), this, SLOT(addTable4()));
     connect(ui->btnTable5, SIGNAL(clicked()), this, SLOT(addTable5()));
     connect(ui->btnTable6, SIGNAL(clicked()), this, SLOT(addTable6()));
+
+
     // connect(this, SIGNAL(locationChanged()),this, SLOT(updateLocation()));
 
     // Serving Button
@@ -101,13 +116,10 @@ void Home::servingStart(){
         else if(ui->tableServingOrder->item(0,0)->text()=="Table5") destination=TABLE5;
         else if(ui->tableServingOrder->item(0,0)->text()=="Table6") destination=TABLE6;
 
-        
-        stateLocation=MOVING; // moving state
         QTextStream(stdout)<<destination;
 
         int mvResult = goToTable(destination);
         if(mvResult) {
-            stateLocation = destination;
             
             // Hello Message
             do{
@@ -136,18 +148,18 @@ void Home::servingStart(){
         else if(ui->tableBellOrder->item(0,0)->text()=="Table5") destination=TABLE5;
         else if(ui->tableBellOrder->item(0,0)->text()=="Table6") destination=TABLE6;
 
-        
-        stateLocation=MOVING; // moving state
+
         QTextStream(stdout)<<destination;
 
         int mvResult = goToTable(destination);
         if(mvResult) {
-            stateLocation = destination;
-            
             // Hello Message
-        QMessageBox msgConfirmBox;
-        int retv=msgConfirmBox.warning(this, "Confirm",QString("Hello, Table%1!!\n If you want to order, press Order button").arg(destination), QMessageBox::Cancel|QMessageBox::Ok);
-
+            QMessageBox msgConfirmBox;
+            int retv=msgConfirmBox.warning(this, "Confirm",QString("Hello, Table%1!!\n If you want to order, press Order button").arg(destination), QMessageBox::Cancel|QMessageBox::Ok);
+            if(retv==QMessageBox::Ok){
+                payment p;
+                p.show();
+            }
         }
     
         ui->tableBellOrder->removeRow(0);
@@ -158,22 +170,26 @@ void Home::servingStart(){
 
 int Home::goToTable(Location dest){
     // location
-    // kitchen 170,200
-    // table1 340,140
-    // table2 515,140
-    // table3 690,140
-    // table4 340,250
-    // table5 515,250
-    // table6 690,250
+    // kitchen 170,170
+    // table1 340,120
+    // table2 515,120
+    // table3 690,120
+    // table4 340,220
+    // table5 515,220
+    // table6 690,220
 
     LocationXY* destTable[7];
-    destTable[0] = new LocationXY{170,200}; // Kitchen
-    destTable[1] = new LocationXY{340,140};
-    destTable[2] = new LocationXY{515,140};
-    destTable[3] = new LocationXY{690,140};
-    destTable[4] = new LocationXY{340,250};
-    destTable[5] = new LocationXY{515,250};
-    destTable[6] = new LocationXY{690,250};
+    destTable[0] = new LocationXY{170,170}; // Kitchen
+    destTable[1] = new LocationXY{340,120};
+    destTable[2] = new LocationXY{515,120};
+    destTable[3] = new LocationXY{690,120};
+    destTable[4] = new LocationXY{340,220};
+    destTable[5] = new LocationXY{515,220};
+    destTable[6] = new LocationXY{690,220};
+
+
+    stateLocation=MOVING;
+    ui->lbstateLocation->setText("MOVING");
 
     while(true){
         if(locationX==destTable[dest]->x) break;
@@ -189,6 +205,10 @@ int Home::goToTable(Location dest){
     }
 
     stateLocation=dest;
+
+    if(!stateLocation) ui->lbstateLocation->setText("HOME");
+    else ui->lbstateLocation->setText(QString("TABLE%1").arg(stateLocation));
+
     return 1;
 }
 

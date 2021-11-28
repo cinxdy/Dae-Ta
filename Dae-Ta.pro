@@ -26,13 +26,18 @@ CONFIG += c++11
 
 SOURCES += \
         main.cpp \
-        home.cpp
+        home.cpp \
+    payment.cpp \
+    payment.cpp
 
 HEADERS += \
-        home.h
+        home.h \
+    payment.h \
+    payment.h
 
 FORMS += \
-        home.ui
+        home.ui \
+    payment.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
