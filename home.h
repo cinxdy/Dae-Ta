@@ -35,6 +35,9 @@ public slots:
     int goToTable(Location);
     void updateLocation();
 
+signals:
+    void locationChanged();
+
 private:
     Ui::Home *ui;
 };

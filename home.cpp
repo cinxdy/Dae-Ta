@@ -7,15 +7,12 @@
 #include <QThread>
 
 
-
-
-static QStringList qStrListOptionTable_Headers = {"TableNo","Floor"};
-
 int m_listCount;
 int locationX;
 int locationY;
 Location stateLocation; // 0:home -1:moving n:tableN
 Location destination;
+
 Home::Home(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::Home)
@@ -35,12 +32,28 @@ Home::Home(QWidget *parent) :
     ui->tableServingOrder->setColumnCount(2);
     ui->tableServingOrder->setColumnWidth(0,120);
     ui->tableServingOrder->setColumnWidth(1,60);
-    ui->tableServingOrder->setHorizontalHeaderLabels(qStrListOptionTable_Headers);
+    ui->tableServingOrder->setHorizontalHeaderLabels({"TableNo","Floor"});
     ui->tableServingOrder->setStyleSheet("QTableWidget QTableCornerButton::section {"
                                "background-color:rgb(187,187,187);"
                                "border-image: url(:/transparent.png);"
                                "image: url(:/qt-logo.ico);"
                                "}");
+
+
+    ui->tableBellOrder->setColumnCount(1);
+    ui->tableBellOrder->setColumnWidth(0,200);
+    ui->tableBellOrder->setHorizontalHeaderLabels({"Bell Order"});
+    ui->tableBellOrder->setStyleSheet("QTableWidget QTableCornerButton::section {"
+                               "background-color:rgb(187,187,187);"
+                               "border-image: url(:/transparent.png);"
+                               "image: url(:/qt-logo.ico);"
+                               "}");
+
+    ui->tableBellOrder->setRowCount(3);
+    ui->tableBellOrder->setItem(0,0,new QTableWidgetItem(QString("Table3")));
+    ui->tableBellOrder->setItem(1,0,new QTableWidgetItem(QString("Table4")));
+    ui->tableBellOrder->setItem(2,0,new QTableWidgetItem(QString("Table6")));
+    
 
     m_listCount=0;
     connect(ui->btnTable1, SIGNAL(clicked()), this, SLOT(addTable1()));
@@ -49,6 +62,7 @@ Home::Home(QWidget *parent) :
     connect(ui->btnTable4, SIGNAL(clicked()), this, SLOT(addTable4()));
     connect(ui->btnTable5, SIGNAL(clicked()), this, SLOT(addTable5()));
     connect(ui->btnTable6, SIGNAL(clicked()), this, SLOT(addTable6()));
+    // connect(this, SIGNAL(locationChanged()),this, SLOT(updateLocation()));
 
     // Serving Button
     connect(ui->btnOrderOrServe,SIGNAL(clicked()),this,SLOT(servingStart()));
@@ -94,19 +108,52 @@ void Home::servingStart(){
         int mvResult = goToTable(destination);
         if(mvResult) {
             stateLocation = destination;
-
+            
+            // Hello Message
             do{
                 QMessageBox msgConfirmBox;
-                int retv=msgConfirmBox.warning(this, "Confirm",QString("Hello Table%1 Did you get your plates?").arg(destination), QMessageBox::Cancel|QMessageBox::Ok);
+                int retv=msgConfirmBox.warning(this, "Confirm",QString("Hello, Table%1!!\n Did you get your plates?").arg(destination), QMessageBox::Cancel|QMessageBox::Ok);
                 if(retv==QMessageBox::Ok) break;
             }
             while(true);
+
+            // QMessageBox msgConfirmBox;
+            // int retv=msgConfirmBox.warning(this, "Confirm",QString("Table%1!!\n Do you want to order something?").arg(destination), QMessageBox::Cancel|QMessageBox::Ok);
+            // if(retv==QMessageBox::Ok) break;
+            // else
 
         }
     
         ui->tableServingOrder->removeRow(0);
         m_listCount--;
     }
+
+    while(ui->tableBellOrder->rowCount()!=0){
+        if(ui->tableBellOrder->item(0,0)->text()=="Table1") destination=TABLE1;
+        else if(ui->tableBellOrder->item(0,0)->text()=="Table2") destination=TABLE2;
+        else if(ui->tableBellOrder->item(0,0)->text()=="Table3") destination=TABLE3;
+        else if(ui->tableBellOrder->item(0,0)->text()=="Table4") destination=TABLE4;
+        else if(ui->tableBellOrder->item(0,0)->text()=="Table5") destination=TABLE5;
+        else if(ui->tableBellOrder->item(0,0)->text()=="Table6") destination=TABLE6;
+
+        
+        stateLocation=MOVING; // moving state
+        QTextStream(stdout)<<destination;
+
+        int mvResult = goToTable(destination);
+        if(mvResult) {
+            stateLocation = destination;
+            
+            // Hello Message
+        QMessageBox msgConfirmBox;
+        int retv=msgConfirmBox.warning(this, "Confirm",QString("Hello, Table%1!!\n If you want to order, press Order button").arg(destination), QMessageBox::Cancel|QMessageBox::Ok);
+
+        }
+    
+        ui->tableBellOrder->removeRow(0);
+    }
+
+    goToTable(HOME);
 }
 
 int Home::goToTable(Location dest){
@@ -138,10 +185,10 @@ int Home::goToTable(Location dest){
         if(locationY==destTable[dest]->y) break;
         else if(locationY<destTable[dest]->y) locationY++;
         else locationY--;
-
         updateLocation();
     }
 
+    stateLocation=dest;
     return 1;
 }
 
