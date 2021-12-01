@@ -1,10 +1,3 @@
-/* Raspberry Pi 4 for Automotive IoT KIT
-* TITLE : I2C Color LED control
-* FILE : i2c_exp_cled.c
-* AUTH : mkdev.co.kr / makeutil.tistory.com
-* Ment : This program code may not be used for commercial purposes. 
-* The author's information cannot be changed at the time of redistribution. */
-// Define the header & constants
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -39,22 +32,17 @@ if(retv!=0)
 printf("Ioctl Error!\n");
 return -1;
 }
-// GPIO Exapnder Port 1 Setting
-values[0] = 0x06; // GPIO Register - TCA9535 Data Sheet 23p
-values[1] = 0x00; // Setting Value
+// GPIO Exapnder Port 1
+values[0] = 0x06; 
+values[1] = 0x00; 
 write(cled_fd,values, 2);
-// CLED Initial 
+
 values[0] = 0x02; // Output Port 1
-values[1] = 0xff; // All Off XBGR0000 = 01110000 ~ 00010000( 70
+values[1] = 0xff; 
 write(cled_fd, values, 2);
 values[1] = 0x50; 
 printf("Set Value : 0x%02x...\n",values[1]);
 write(cled_fd,values,2);
-
-
-// Color LED OFF.
-//values[1] = 0xff;
-//write(cled_fd,values,2);
 close(cled_fd);
 return 0;
 }
