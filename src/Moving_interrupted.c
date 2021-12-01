@@ -30,13 +30,11 @@ read(led_fd,temp_values,8);
 i2c_reg = 0x07;
 values[0] = i2c_reg; 
 values[1] = 0x00; 
-printf("%d\n",values[1]);
-printf("%d\n",temp_values[1]);
 write(led_fd,values, 2);
 //Output Port 1
 i2c_reg = 0x03;
 values[0] = i2c_reg; 
-write(led_fd,values, 2);
+
 
 values[1] = temp_values[1];
 write(led_fd,values,2);

@@ -45,7 +45,6 @@ write(led_fd,values, 2);
 // command byte to select "Output Port 1" control register
 i2c_reg = 0x03;
 values[0] = i2c_reg; 
-write(led_fd,values, 2);
 
 // Turn off 8 LEDs before starting
 values[1] = temp_values[1];
