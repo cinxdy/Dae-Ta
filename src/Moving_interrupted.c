@@ -43,7 +43,7 @@ write(led_fd,values,2);
 read(led_fd,temp_values,8);
 values[1]= 0xFD&temp_values[1];
 write(led_fd,values,2);
-usleep(1000000);
+usleep(100000);
 
 values[1]= 0x02|temp_values[1];
 write(led_fd,values,2);
