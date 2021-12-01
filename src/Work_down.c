@@ -18,7 +18,6 @@ int main(int argc, char** argv)
 int retv;
 char value;
 char values[2]={0,};
-// Signal Setting
 signal(SIGINT, sigint_handle); 
 cled_fd = open("/dev/i2c-1",O_RDWR);
 if(cled_fd<3)
@@ -32,16 +31,15 @@ if(retv!=0)
 printf("Ioctl Error!\n");
 return -1;
 }
-// GPIO Exapnder Port 1 Setting
-values[0] = 0x06; // GPIO Register - TCA9535 Data Sheet 23p
-values[1] = 0x00; // Setting Value
+// GPIO Exapnder Port 1
+values[0] = 0x06; 
+values[1] = 0x00; 
 write(cled_fd,values, 2);
 // CLED Initial 
 values[0] = 0x02; // Output Port 1
-values[1] = 0xff; // All Off XBGR0000 = 01110000 ~ 00010000( 70
+values[1] = 0xff; 
 write(cled_fd, values, 2);
 
-// Color LED OFF.
 values[1] = 0xff;
 write(cled_fd,values,2);
 close(cled_fd);

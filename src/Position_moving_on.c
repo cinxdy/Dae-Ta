@@ -29,8 +29,6 @@ read(led_fd,temp_values,8);
 i2c_reg = 0x07;
 values[0] = i2c_reg;
 values[1] = 0x00;
-printf("%d\n",values[1]);
-printf("%d\n",temp_values[1]);
 write(led_fd,values, 2);
 //Output Port 1"
 i2c_reg = 0x03;
@@ -43,10 +41,6 @@ read(led_fd,temp_values,8);
 values[1]= 0xFE&temp_values[1];
 write(led_fd,values,2);
 //usleep(1000000); // 100ms
-usleep(50000);
-
-values[1]= 0x01|temp_values[1];
-write(led_fd,values,2);
 usleep(50000);
 close(led_fd);
 return 0;

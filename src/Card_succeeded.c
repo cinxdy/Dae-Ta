@@ -34,20 +34,19 @@ write(led_fd,values, 2);
 // Output Port 1
 i2c_reg = 0x03;
 values[0] = i2c_reg; 
-
-
-
+for(int i=0; i<3; i++){
 values[1] = temp_values[1];
 write(led_fd,values,2);
 read(led_fd,temp_values,8);
 values[1]= 0xFE&temp_values[1];
-printf("%d!\n",temp_values[1]);
-printf("%d\n",values[1]);
-
 write(led_fd,values,2);
-printf("%d\n",temp_values[1]);
-printf("%d\n",values[1]);
-usleep(100000);
+//usleep(1000000); // 100ms
+usleep(1000000);
+
+values[1]= 0x01|temp_values[1];
+write(led_fd,values,2);
+usleep(1000000);
+}
 
 close(led_fd);
 return 0;
