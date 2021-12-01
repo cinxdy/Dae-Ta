@@ -36,7 +36,6 @@ int main(int argc, char** argv){
 
     values[1]= 0x01|temp_values[1];
     write(led_fd,values,2);
-    usleep(50000);
     close(led_fd);
     return 0;
 }
