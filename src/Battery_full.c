@@ -35,7 +35,7 @@ write(led_fd,values, 2);
 //Output Port 1
 i2c_reg = 0x03;
 values[0] = i2c_reg; 
-write(led_fd, values, 2);
+
 
 
 values[1] = temp_values[1];

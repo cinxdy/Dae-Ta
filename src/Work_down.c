@@ -1,10 +1,3 @@
-/* Raspberry Pi 4 for Automotive IoT KIT
-* TITLE : I2C Color LED control
-* FILE : i2c_exp_cled.c
-* AUTH : mkdev.co.kr / makeutil.tistory.com
-* Ment : This program code may not be used for commercial purposes. 
-* The author's information cannot be changed at the time of redistribution. */
-// Define the header & constants
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
