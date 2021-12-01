@@ -12,47 +12,51 @@
 #include <sys/ioctl.h>
 #include <sys/types.h>
 #include <linux/i2c-dev.h>
-#include "./aiot_hardware.h"
-#define I2C_ADAPTOR "/dev/i2c-1"
+//#include "./aiot_hardware.h"
+
+//#define I2C_ADAPTOR "/dev/i2c-1"
 int main(int argc, char** argv){
 int led_fd;
 int retv;
 char i2c_reg;
 char led_data=0;
+char temp_values[2]={0,};
 char values[2]={0,};
 // Open I2C device node (adapter)
-led_fd = open(I2C_ADAPTOR,O_RDWR);
+led_fd = open("/dev/i2c-1",O_RDWR);
 if(led_fd < 3) {
-printf("Device node open error!!!: %s", I2C_ADAPTOR);
+printf("Device node open error!!!: %s", "/dev/i2c-1");
 return -1;
 }
+retv=ioctl(led_fd, I2C_SLAVE,0x20);
 // Specify I2C device address you want to communicate (select slave device)
 if(retv!=0) {
-retv=ioctl(led_fd, I2C_SLAVE, I2C_LED);
 printf("Ioctl Error!\n");
 return -1;
 }
+read(led_fd,temp_values,8);
+printf("%d\n",temp_values[1]);
 // Send command byte to configure "Configuration Port 1"
 i2c_reg = 0x07;
 values[0] = i2c_reg; // GPIO Register -TCA9535 Data Sheet 23p
+//values[1] = temp_values[1];
 values[1] = 0x00; // Setting Value
-write(led_fd,values, 2);
+write(led_fd, values, 2);
+printf("%d\n",temp_values[1]);
+printf("%d\n",values[1]);
 // command byte to select "Output Port 1" control register
 i2c_reg = 0x03;
 values[0] = i2c_reg; 
+
+
+
 // Turn off 8 LEDs before starting
-values[1] = 0xff;  // Active-Low
-write(led_fd, values, 2);
-led_data= 0xff;
-for (int i=0; i<256; i++) {
-values[1] = led_data;
-write(led_fd,values,2);
-usleep(100000); // 100ms
-Value--;
-}
+
+
 // Turn off 8 LEDs
 values[1]=0xff;
 write(led_fd,values,2);
+printf("%d\n",values[1]);
 close(led_fd);
 return 0;
 }
