@@ -241,6 +241,9 @@ int Home::goToTable(Location dest){
 void Home:: updateLocation(){
     ui->lbLocation->move(locationX,locationY);
     ui->lbLocation->repaint();
-//    system("/home/pi/myQt/Dae-Ta/src/moving");
-    QThread::usleep(10000);
+
+    system("/home/pi/myQt/Dae-Ta/src/moving_on");
+//    QThread::usleep(10000);
+
+    system("/home/pi/myQt/Dae-Ta/src/moving_off");
 }
