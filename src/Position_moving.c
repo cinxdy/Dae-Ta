@@ -58,7 +58,7 @@ printf("%d\n",values[1]);
 //values[1] =temp_values;
 write(led_fd,values,2);
 //usleep(1000000); // 100ms
-usleep(1000000);
+usleep(100000);
 
 
 // Turn off 8 LEDs

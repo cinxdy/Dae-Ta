@@ -19,24 +19,23 @@ if(led_fd < 3) {
 printf("Device node open error!!!: %s", "/dev/i2c-1");
 return -1;
 }
-retv=ioctl(led_fd, I2C_SLAVE,0x20);
+retv=ioctl(led_fd, I2C_SLAVE,0x21);
 if(retv!=0) {
 printf("Ioctl Error!\n");
 return -1;
 }
 read(led_fd,temp_values,8);
 printf("%d\n",temp_values[1]);
-// Send command byte to configure "Configuration Port 1"
+//Configuration Port 1
 i2c_reg = 0x07;
 values[0] = i2c_reg; 
-values[1] = 0x00; // Setting Value
+values[1] = 0x00;
 write(led_fd,values, 2);
-// command byte to select "Output Port 1" control register
-i2c_reg = 0x02;
+// Output Port 1
+i2c_reg = 0x03;
 values[0] = i2c_reg; 
 
 
-// Turn off 8 LEDs before starting
 values[1]=0xff;
 write(led_fd,values,2);
 printf("%d\n",values[1]);
