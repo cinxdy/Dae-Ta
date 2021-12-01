@@ -6,13 +6,16 @@
 #include <QMessageBox>
 #include <QDebug>
 #include <QThread>
-
+//#include <thread>
+//#include "./src/Position_moving2.c" // Test
 
 static int m_listCount;
 static int locationX;
 static int locationY;
+static int battery;
 static Location stateLocation; // 0:home -1:moving n:tableN
 static Location destination;
+
 
 Home::Home(QWidget *parent) :
     QMainWindow(parent),
@@ -20,15 +23,16 @@ Home::Home(QWidget *parent) :
 {
     ui->setupUi(this);
     locationX=170;
-    locationY=200;
+    locationY=170;
     stateLocation=HOME;
+    battery=100;
     ui->lbstateLocation->setText("HOME");
 
     destination=HOME;
+    system("/home/pi/myQt/Dae-Ta/src/ldown");
     
     if(stateLocation==0) ui->btnOrderOrServe->setText("Serve");
     else ui->btnOrderOrServe->setText("Order");
-
 
 
     // Serving Table
@@ -118,16 +122,20 @@ void Home::servingStart(){
 
         QTextStream(stdout)<<destination;
 
+        if(battery>50) system("/home/pi/myQt/Dae-Ta/src/full");
+        else if(battery>10) system("/home/pi/myQt/Dae-Ta/src/resting");
+        else system("/home/pi/myQt/Dae-Ta/src/nothing");
+
         int mvResult = goToTable(destination);
         if(mvResult) {
-            
+            battery-=10;
             // Hello Message
-            do{
-                QMessageBox msgConfirmBox;
-                int retv=msgConfirmBox.warning(this, "Confirm",QString("Hello, Table%1!!\n Did you get your plates?").arg(destination), QMessageBox::Cancel|QMessageBox::Ok);
-                if(retv==QMessageBox::Ok) break;
-            }
-            while(true);
+//            do{
+//                QMessageBox msgConfirmBox;
+//                int retv=msgConfirmBox.warning(this, "Confirm",QString("Hello, Table%1!!\n Did you get your plates?").arg(destination), QMessageBox::Cancel|QMessageBox::Ok);
+//                if(retv==QMessageBox::Ok) break;
+//            }
+//            while(true);
 
             // QMessageBox msgConfirmBox;
             // int retv=msgConfirmBox.warning(this, "Confirm",QString("Table%1!!\n Do you want to order something?").arg(destination), QMessageBox::Cancel|QMessageBox::Ok);
@@ -187,34 +195,52 @@ int Home::goToTable(Location dest){
     destTable[5] = new LocationXY{515,220};
     destTable[6] = new LocationXY{690,220};
 
-
     stateLocation=MOVING;
-    ui->lbstateLocation->setText("MOVING");
+    ui->lbstateLocation->setText("MOVING"); 
+    system("/home/pi/myQt/Dae-Ta/src/mmoving");
+
+//    std::thread t(Position_moving);
+//    t.join();
+
+//    thread->start();
 
     while(true){
         if(locationX==destTable[dest]->x) break;
         else if(locationX<destTable[dest]->x) locationX++;
         else locationX--;
+
         updateLocation();
     }
+
     while(true){
         if(locationY==destTable[dest]->y) break;
         else if(locationY<destTable[dest]->y) locationY++;
         else locationY--;
         updateLocation();
     }
+//    thread->stop();
 
     stateLocation=dest;
 
-    if(!stateLocation) ui->lbstateLocation->setText("HOME");
-    else ui->lbstateLocation->setText(QString("TABLE%1").arg(stateLocation));
+    if(!stateLocation) {
+        ui->lbstateLocation->setText("HOME");
+        system("/home/pi/myQt/Dae-Ta/src/home");
+    }
+    else {
+        ui->lbstateLocation->setText(QString("TABLE%1").arg(stateLocation));
+        system("/home/pi/myQt/Dae-Ta/src/table");
+    }
 
+
+    system("/home/pi/myQt/Dae-Ta/src/stopped");
     return 1;
+
 }
 
 
 void Home:: updateLocation(){
     ui->lbLocation->move(locationX,locationY);
     ui->lbLocation->repaint();
+//    system("/home/pi/myQt/Dae-Ta/src/moving");
     QThread::usleep(10000);
 }
