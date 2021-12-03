@@ -26,7 +26,6 @@ printf("Ioctl Error!\n");
 return -1;
 }
 read(led_fd,temp_values,8);
-printf("%d\n",temp_values[1]);
 // Configuration Port 1
 i2c_reg = 0x07;
 values[0] = i2c_reg; 
@@ -41,7 +40,7 @@ values[0] = i2c_reg;
 values[1] = temp_values[1];
 write(led_fd,values,2);
 read(led_fd,temp_values,8);
-values[1]= 0x3F&temp_values[1];
+values[1]= 0x0F&temp_values[1];
 write(led_fd,values,2);
 close(led_fd);
 return 0;
