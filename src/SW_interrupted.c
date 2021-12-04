@@ -15,7 +15,7 @@ int bool_interrupt()
     int retv;
 //    char value;
     char values[2]={0,};
-    bool r_value;
+    bool r_value=false;
 
     // Signal Setting
     fd = open("/dev/i2c-1",O_RDWR);
@@ -47,6 +47,7 @@ int bool_interrupt()
     reg = 0x00;
     write(fd,&reg,1);
     read(fd,&getdata,1);
+
     if(!(getdata&0x01)){
         if(btn_state[0]==0){
             printf("눌림\n");

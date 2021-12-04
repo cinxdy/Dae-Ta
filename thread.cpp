@@ -16,9 +16,10 @@ void Thread::run()
         if(m_flag){
             system("/home/pi/myQt/Dae-Ta/src/moving");
             usleep(100000);
-            QTextStream(stdout)<<"on";
+//            QTextStream(stdout)<<"on";
             int r_value = bool_interrupt();
-            if(r_value) emit interrupted();
+//            QTextStream(stdout)<<"SWSWSWWSWSWSW"<<r_value<<endl;
+            if(r_value) emit goInterrupted();
         }
 
         if(battery>50) system("/home/pi/myQt/Dae-Ta/src/full");

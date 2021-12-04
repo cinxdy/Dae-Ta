@@ -23,6 +23,10 @@ public slots:
     void addGetItem(int,int);
     void deleteItem(int,int);
 
+    void btnPayClicked();
+
+signals:
+    void closePayment();
 
 private:
     Ui::payment *ui;

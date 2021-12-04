@@ -1,5 +1,6 @@
 #include "payment.h"
 #include "ui_payment.h"
+#include <QMessageBox>
 
 static QStringList tableMenuRows={"IoT버거","IoT치킨","IoT피자","너가 저항 버거","LED 스파게티","교수님 원픽 김치찌개","콜라","사이다","든든한동","싸이버거"};
 static QStringList tableMenuPrices={"5,000원","10,000원","10,000원","100,000원","10,000원","500원","1,000원","1,000원","2,800원","3,900원"};
@@ -44,6 +45,7 @@ payment::payment(QWidget *parent) :
     }
     connect(ui->tableMenu,SIGNAL(cellClicked(int,int)),this,SLOT(addGetItem(int,int)));
     connect(ui->tableCart,SIGNAL(cellClicked(int,int)),this,SLOT(deleteItem(int,int)));
+    connect(ui->btnPay, SIGNAL(clicked()),this, SLOT(btnPayClicked()));
  
 }
 
@@ -69,6 +71,12 @@ void payment::updateSum(){
         sum+= priceList[ui->tableCart->item(i,2)->text().toInt()];
     }
     ui->lbPrice->setText(QString("%1").arg(sum));
+}
+
+void payment::btnPayClicked(){
+    QMessageBox msgConfirmBox;
+    int retv=msgConfirmBox.warning(this, "Confirm",QString("Do you want to pay and close the order page?"), "No","Yes");
+    if(retv) emit closePayment();
 }
 
 payment::~payment()

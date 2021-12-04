@@ -16,7 +16,8 @@ public:
 //    void movingStart();
 
 signals:
-    void interrupted();
+    void goInterrupted();
+    void closePayment();
 
 private:
     void run();

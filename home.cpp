@@ -27,6 +27,7 @@ Home::Home(QWidget *parent) :
     t=new Thread(this);
     t->m_flag=0;
     t->start();
+
     system("echo 0 > /sys/class/gpio/export");
     usleep(1000);
     system("echo 1 > /sys/class/gpio/export");
@@ -47,7 +48,7 @@ Home::Home(QWidget *parent) :
     inputTimer = new QTimer(this); // Read from Dev
     inputTimer->start(500);
 
-    connect(inputTimer, SIGNAL(timeout()), SLOT(addTable()));
+    connect(inputTimer, SIGNAL(timeout()),this, SLOT(tableBellOrder()));
 
     locationX=170;
     locationY=170;
@@ -96,7 +97,7 @@ Home::Home(QWidget *parent) :
     ui->tableBellOrder->setRowCount(3);
     ui->tableBellOrder->setItem(0,0,new QTableWidgetItem(QString("Table3")));
     ui->tableBellOrder->setItem(1,0,new QTableWidgetItem(QString("Table4")));
-     ui->tableBellOrder->setItem(2,0,new QTableWidgetItem(QString("Table5")));
+    ui->tableBellOrder->setItem(2,0,new QTableWidgetItem(QString("Table5")));
     
 
     m_listCount=0;
@@ -104,12 +105,13 @@ Home::Home(QWidget *parent) :
     connect(ui->btnTable2, SIGNAL(clicked()), this, SLOT(addTable2()));
     connect(ui->btnTable3, SIGNAL(clicked()), this, SLOT(addTable3()));
     connect(ui->btnTable4, SIGNAL(clicked()), this, SLOT(addTable4()));
-    connect(ui->btnTable5, SIGNAL(clicked()), this, SLOT(addTable5()));
-    connect(t, SIGNAL(interrupted()), this, SLOT(interruptMoving()));
+    connect(ui->btnTable5, SIGNAL(clicked()), this, SLOT(addTable5()));/*
+    connect(t, SIGNAL(goInterrupted()), this, SLOT(interruptMoving()));*/
 
 
     // Serving Button
     connect(ui->btnOrderOrServe,SIGNAL(clicked()),this,SLOT(btnOrderOrServeClicked()));
+
 }
 
 
@@ -140,7 +142,7 @@ void Home::addTable5(){addTable(5);}
 void Home::addTable(int num){
 
     QMessageBox msgInputBox;
-    int floor=msgInputBox.warning(this, "Confirm","Data Input","First Floor","Second Floor","Third Floor")+1;
+    int floor=msgInputBox.warning(this, "Confirm","Which floor did you put the food?","First Floor","Second Floor","Third Floor")+1;
     QTextStream(stdout)<< floor;
 
     ui->tableServingOrder->insertRow(m_listCount);
@@ -152,8 +154,10 @@ void Home::addTable(int num){
 }
 
 void Home::servingStart(){
+
+    QMessageBox msgConfirmBox;
     QMediaPlayer* m_media =new QMediaPlayer;
-    m_media->setMedia(QUrl::fromLocalFile("/home/pi/Dae-Ta/src/letsgo.wav"));
+    m_media->setMedia(QUrl::fromLocalFile("/home/pi/myQt/Dae-Ta/src/letsgo.wav"));
     m_media->setVolume(50);
 
     m_media->play();
@@ -172,30 +176,39 @@ void Home::servingStart(){
             t->battery-=10;
             // Hello Message
 
-            QMessageBox msgConfirmBox;
             int retv;
             while(true){
                 // Speaker Guide
-                retv=msgConfirmBox.warning(this, "Confirm",QString("Hello, Table%1!!\n Did you get your plates?").arg(destination), QMessageBox::Cancel|QMessageBox::Ok);
-                if(retv==QMessageBox::Ok) break;
+                retv=msgConfirmBox.warning(this, "Confirm",QString("Hello, Table%1!!\nDid you get your plates?").arg(destination), "No", "Yes");
+                if(retv) break;
             }
 
-            retv=msgConfirmBox.warning(this, "Confirm",QString("Hello, Table%1!!\n Do you want to order something?").arg(destination), QMessageBox::Cancel|QMessageBox::Ok);
-            if(retv==QMessageBox::Ok) {
+            retv=msgConfirmBox.warning(this, "Confirm",QString("Hello, Table%1!!\nDo you want to order something?").arg(destination), "No", "Yes");
+            if(retv) {
                 for(int i=0;i<ui->tableBellOrder->rowCount();i++){
                     QTextStream(stdout)<<ui->tableBellOrder->item(i,0)->text()<<endl;
                     QTextStream(stdout)<<QString("Table%1").arg(destination)<<endl;
 
-//                    if(ui->tableBellOrder->item(i,0)->text()==QString("Table%1").arg(destination))
-//                        ui->tableBellOrder->removeRow(i);
+                    //                    if(ui->tableBellOrder->item(i,0)->text()==QString("Table%1").arg(destination))
+                    //                        ui->tableBellOrder->removeRow(i);
                 }
                 openPayment();
+                QEventLoop loop;
+                connect(this, SIGNAL(restart()), &loop, SLOT(quit()));
+                loop.exec();
             }
 
             ui->tableServingOrder->removeRow(0);
             m_listCount--;
         }
+        else{
+            int retv=msgConfirmBox.warning(this, "Confirm",QString("Do you want to go again?"), "No", "Yes");
+        }
+
     }
+
+
+    goToTable(HOME);
 
 
 }
@@ -271,7 +284,11 @@ int Home::goToTable(Location dest){
         else if(locationX<destTable[dest]->x) locationX++;
         else locationX--;
 
-        if(interrupted) return 0;
+        if(interrupted) {
+            stateLocation=INTERRUPTED;
+            interrupted=0;
+            return 0;
+        }
 
         ui->lbLocation->move(locationX,locationY);
         ui->lbLocation->repaint();
@@ -283,7 +300,11 @@ int Home::goToTable(Location dest){
         else if(locationY<destTable[dest]->y) locationY++;
         else locationY--;
 
-        if(interrupted) return 0;
+        if(interrupted) {
+            stateLocation=INTERRUPTED;
+            interrupted=0;
+            return 0;
+        }
 
         ui->lbLocation->move(locationX,locationY);
         ui->lbLocation->repaint();
@@ -295,11 +316,11 @@ int Home::goToTable(Location dest){
 
     if(!stateLocation) {
         ui->lbstateLocation->setText("HOME");
-        system("/home/pi/Dae-Ta/src/home");
+        system("/home/pi/myQt/Dae-Ta/src/home");
     }
     else {
         ui->lbstateLocation->setText(QString("TABLE%1").arg(stateLocation));
-        system("/home/pi/Dae-Ta/src/table");
+        system("/home/pi/myQt/Dae-Ta/src/table");
     }
 
     system("/home/pi/myQt/Dae-Ta/src/stopped");
@@ -330,20 +351,31 @@ void Home::tableBellOrder(){
         ui->tableBellOrder->insertRow(m_listCount);
         ui->tableBellOrder->setItem(m_listCount,0,new QTableWidgetItem(QString("Table%1").arg(4)));
         m_listCount++;
-   }
+    }
 }
 
 void Home::openPayment(){
     p=new payment();
     p->show();
     this->hide();
+
+    connect(p, SIGNAL(closePayment()), this, SLOT(openHomeAgain()));
+}
+
+void Home::openHomeAgain(){
+    p->hide();
+    delete p;
+    this->show();
+    sleep(1);
+    emit restart();
 }
 
 
 void Home::interruptMoving(){
     QTextStream(stdout)<<"EndEndEnd";
-    interrupted=true;
+    interrupted=1;
 }
+
 unsigned char Home::getOneByteValueOfExe(int chan)
 {
 

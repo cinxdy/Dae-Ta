@@ -7,7 +7,7 @@
 #include <QtMultimedia>
 #include <QtMultimediaWidgets>
 
-enum Location {MOVING=-1,HOME, TABLE1,TABLE2,TABLE3,TABLE4,TABLE5,TABLE6}; // 0:home -1:moving n:tableN
+enum Location {MOVING=-1,HOME, TABLE1,TABLE2,TABLE3,TABLE4,TABLE5,INTERRUPTED}; // 0:home -1:moving n:tableN
 class LocationXY {
     public:
         int x;
@@ -53,9 +53,11 @@ public slots:
     int goToTable(Location);
     //void updateLocation();
     void tableBellOrder();
+    void openHomeAgain();
 
 signals:
     void stateLocationChanged();
+    void restart();
 //    void movingStart();
 
 private:
