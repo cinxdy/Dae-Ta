@@ -84,25 +84,12 @@
      <rect>
       <x>470</x>
       <y>290</y>
-      <width>151</width>
+      <width>321</width>
       <height>81</height>
      </rect>
     </property>
     <property name="text">
      <string>Table 5</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="btnTable6">
-    <property name="geometry">
-     <rect>
-      <x>640</x>
-      <y>290</y>
-      <width>151</width>
-      <height>81</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Table 6</string>
     </property>
    </widget>
    <widget class="QTableWidget" name="tableServingOrder">
@@ -184,7 +171,7 @@
      <x>0</x>
      <y>0</y>
      <width>1080</width>
-     <height>28</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuHome">

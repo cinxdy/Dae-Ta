@@ -28,12 +28,12 @@ SOURCES += \
         main.cpp \
         home.cpp \
     payment.cpp \
-    payment.cpp
+    thread.cpp
 
 HEADERS += \
         home.h \
     payment.h \
-    payment.h
+    thread.h
 
 FORMS += \
         home.ui \
