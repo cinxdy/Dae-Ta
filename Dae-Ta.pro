@@ -37,7 +37,7 @@ HEADERS += \
 
 FORMS += \
         home.ui \
-#    payment.ui/
+    payment.ui\
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
