@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui multimedia multimediawidgets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -27,17 +27,15 @@ CONFIG += c++11
 SOURCES += \
         main.cpp \
         home.cpp \
-    payment.cpp \
-    payment.cpp
+#    payment.cpp\
 
 HEADERS += \
         home.h \
-    payment.h \
-    payment.h
+#    payment.h \
 
 FORMS += \
         home.ui \
-    payment.ui
+#    payment.ui/
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

@@ -1,7 +1,11 @@
 #include "home.h"
 #include "ui_home.h"
 #include "payment.h"
+#include "stdio.h"
+#include "stdlib.h"
+#include "unistd.h"
 
+#include <QTimer>
 #include <QString>
 #include <QMessageBox>
 #include <QDebug>
@@ -22,6 +26,28 @@ Home::Home(QWidget *parent) :
     ui(new Ui::Home)
 {
     ui->setupUi(this);
+    system("echo 0 > /sys/class/gpio/export");
+    usleep(1000);
+    system("echo 1 > /sys/class/gpio/export");
+    usleep(1000);
+    system("echo 4 > /sys/class/gpio/export");
+    usleep(1000);
+    system("echo 5 > /sys/class/gpio/export");
+    usleep(1000);
+    system("echo in > /sys/class/gpio/gpio0/direction");
+    usleep(1000);
+    system("echo in > /sys/class/gpio/gpio1/direction");
+    usleep(1000);
+    system("echo in > /sys/class/gpio/gpio4/direction");
+    usleep(1000);
+    system("echo in > /sys/class/gpio/gpio5/direction");
+    usleep(1000);
+
+    inputTimer = new QTimer(this); // Read from Dev
+    inputTimer->start(500);
+
+    connect(inputTimer, SIGNAL(timeout()), SLOT(addTable()));
+
     locationX=170;
     locationY=170;
     stateLocation=HOME;
@@ -29,7 +55,7 @@ Home::Home(QWidget *parent) :
     ui->lbstateLocation->setText("HOME");
 
     destination=HOME;
-    system("/home/pi/myQt/Dae-Ta/src/ldown");
+    system("/home/pi/Dae-Ta/src/ldown");
     
     if(stateLocation==0) ui->btnOrderOrServe->setText("Serve");
     else ui->btnOrderOrServe->setText("Order");
@@ -67,9 +93,9 @@ Home::Home(QWidget *parent) :
                                 "}");
 
     ui->tableBellOrder->setRowCount(3);
-    ui->tableBellOrder->setItem(0,0,new QTableWidgetItem(QString("Table3")));
-    ui->tableBellOrder->setItem(1,0,new QTableWidgetItem(QString("Table4")));
-    ui->tableBellOrder->setItem(2,0,new QTableWidgetItem(QString("Table6")));
+//    ui->tableBellOrder->setItem(0,0,new QTableWidgetItem(QString("Table3")));
+//    ui->tableBellOrder->setItem(1,0,new QTableWidgetItem(QString("Table4")));
+//    ui->tableBellOrder->setItem(2,0,new QTableWidgetItem(QString("Table6")));
     
 
     m_listCount=0;
@@ -89,6 +115,10 @@ Home::Home(QWidget *parent) :
 
 Home::~Home()
 {
+    system("echo 0 > /sys/class/gpio/unexport");
+    system("echo 1 > /sys/class/gpio/unexport");
+    system("echo 4 > /sys/class/gpio/unexport");
+    system("echo 5 > /sys/class/gpio/unexport");
     delete ui;
 }
 
@@ -111,7 +141,11 @@ void Home::addTable(int num){
 }
 
 void Home::servingStart(){
+    QMediaPlayer* m_media =new QMediaPlayer;
+    m_media->setMedia(QUrl::fromLocalFile("/home/pi/Dae-Ta/src/letsgo.wav"));
+    m_media->setVolume(50);
 
+    m_media->play();
     while(ui->tableServingOrder->rowCount()!=0){
         if(ui->tableServingOrder->item(0,0)->text()=="Table1") destination=TABLE1;
         else if(ui->tableServingOrder->item(0,0)->text()=="Table2") destination=TABLE2;
@@ -122,9 +156,9 @@ void Home::servingStart(){
 
         QTextStream(stdout)<<destination;
 
-        if(battery>50) system("/home/pi/myQt/Dae-Ta/src/full");
-        else if(battery>10) system("/home/pi/myQt/Dae-Ta/src/resting");
-        else system("/home/pi/myQt/Dae-Ta/src/nothing");
+        if(battery>50) system("/home/pi/Dae-Ta/src/full");
+        else if(battery>10) system("/home/pi/Dae-Ta/src/resting");
+        else system("/home/pi/Dae-Ta/src/nothing");
 
         int mvResult = goToTable(destination);
         if(mvResult) {
@@ -165,8 +199,8 @@ void Home::servingStart(){
             QMessageBox msgConfirmBox;
             int retv=msgConfirmBox.warning(this, "Confirm",QString("Hello, Table%1!!\n If you want to order, press Order button").arg(destination), QMessageBox::Cancel|QMessageBox::Ok);
             if(retv==QMessageBox::Ok){
-                payment p;
-                p.show();
+//                payment p;
+//                p.show();
             }
         }
     
@@ -224,26 +258,84 @@ int Home::goToTable(Location dest){
 
     if(!stateLocation) {
         ui->lbstateLocation->setText("HOME");
-        system("/home/pi/myQt/Dae-Ta/src/home");
+        system("/home/pi/Dae-Ta/src/home");
     }
     else {
         ui->lbstateLocation->setText(QString("TABLE%1").arg(stateLocation));
-        system("/home/pi/myQt/Dae-Ta/src/table");
+        system("/home/pi/Dae-Ta/src/table");
     }
 
 
-    system("/home/pi/myQt/Dae-Ta/src/stopped");
+    system("/home/pi/Dae-Ta/src/stopped");
     return 1;
 
 }
+void Home::tableBellOrder(){
 
+    if(getOneByteValueOfExe(0)-48==0){
+        ui->tableBellOrder->insertRow(m_listCount);
+        ui->tableBellOrder->setItem(m_listCount,0,new QTableWidgetItem(QString("Table%1").arg(1)));
+        m_listCount++;
+    }
+
+    if(getOneByteValueOfExe(1)-48==0){
+        ui->tableBellOrder->insertRow(m_listCount);
+        ui->tableBellOrder->setItem(m_listCount,0,new QTableWidgetItem(QString("Table%1").arg(2)));
+        m_listCount++;
+    }
+
+    if(getOneByteValueOfExe(2)-48==0){
+        ui->tableBellOrder->insertRow(m_listCount);
+        ui->tableBellOrder->setItem(m_listCount,0,new QTableWidgetItem(QString("Table%1").arg(3)));
+        m_listCount++;
+    }
+
+    if(getOneByteValueOfExe(3)-48==0){
+        ui->tableBellOrder->insertRow(m_listCount);
+        ui->tableBellOrder->setItem(m_listCount,0,new QTableWidgetItem(QString("Table%1").arg(4)));
+        m_listCount++;
+   }
+}
 
 void Home:: updateLocation(){
     ui->lbLocation->move(locationX,locationY);
     ui->lbLocation->repaint();
 
-    system("/home/pi/myQt/Dae-Ta/src/moving_on");
+    system("/home/pi/Dae-Ta/src/moving_on");
 //    QThread::usleep(10000);
 
-    system("/home/pi/myQt/Dae-Ta/src/moving_off");
+    system("/home/pi/Dae-Ta/src/moving_off");
+}
+unsigned char Home::getOneByteValueOfExe(int chan)
+{
+
+    FILE *pFile;
+    unsigned char value;
+
+    switch(chan)
+    {
+    case 0:
+        pFile = popen("cat /sys/class/gpio/gpio0/value", "r");
+        break;
+    case 1:
+        pFile = popen("cat /sys/class/gpio/gpio1/value", "r");
+        break;
+    case 2:
+        pFile = popen("cat /sys/class/gpio/gpio4/value", "r");
+        break;
+    case 3:
+        pFile = popen("cat /sys/class/gpio/gpio5/value", "r");
+        break;
+    default:
+        qDebug() << "xxx";
+        break;
+    }
+
+
+    value = fgetc(pFile);
+
+
+    pclose(pFile);
+
+    return value;
 }
