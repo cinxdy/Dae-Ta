@@ -28,12 +28,15 @@ SOURCES += \
         main.cpp \
         home.cpp \
     payment.cpp \
-    thread.cpp
+    thread.cpp \
+    src/pushedButton.c \
+#    socket.cpp
 
 HEADERS += \
         home.h \
     payment.h \
-    thread.h
+    thread.h \
+#    socket.h
 
 FORMS += \
         home.ui \

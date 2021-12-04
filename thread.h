@@ -18,6 +18,7 @@ public:
 signals:
     void goInterrupted();
     void closePayment();
+    void pushedButton(int);
 
 private:
     void run();

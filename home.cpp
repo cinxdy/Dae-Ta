@@ -9,12 +9,15 @@
 #include <QString>
 #include <QMessageBox>
 #include <QTextStream>
+#include <QThread>
+
+#include <QTcpSocket>
 
 static int m_listCount;
+static int b_listCount;
 static int locationX;
 static int locationY;
 static int interrupted;
-static int gotFood;
 static Location stateLocation; // 0:home -1:moving n:tableN
 static Location destination;
 
@@ -27,6 +30,15 @@ Home::Home(QWidget *parent) :
     t=new Thread(this);
     t->m_flag=0;
     t->start();
+
+//    s= new socket();
+// //connect signal and slot
+//    connect(ui->connectButton, SIGNAL(clicked()), this, SLOT(connectToServer()));
+//    connect(socket, SIGNAL(connected()), this, SLOT(onConnectServer()));
+//    connect(ui->sendButton, SIGNAL(clicked()), this, SLOT(sendRequest()));
+//    connect(socket, SIGNAL(readyRead()), this, SLOT(readMessage()));
+//    connect(socket, SIGNAL(disconnected()), this, SLOT(connectionClosedByServer()));
+//    connect(socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(error()));
 
     system("echo 0 > /sys/class/gpio/export");
     usleep(1000);
@@ -48,7 +60,11 @@ Home::Home(QWidget *parent) :
     inputTimer = new QTimer(this); // Read from Dev
     inputTimer->start(500);
 
-    connect(inputTimer, SIGNAL(timeout()),this, SLOT(tableBellOrder()));
+//    connect(inputTimer, SIGNAL(timeout()),this, SLOT(tableBellOrder()));
+
+    connect(t, SIGNAL(pushedButton(int)), this, SLOT(addBellTable(int)));
+    connect(this, SIGNAL(goToBellTableSignal()),this,SLOT(goToBellTable()));
+
 
     locationX=170;
     locationY=170;
@@ -94,13 +110,14 @@ Home::Home(QWidget *parent) :
                                   // "padding:10px;"
                                   "}");
 
-    ui->tableBellOrder->setRowCount(3);
-    ui->tableBellOrder->setItem(0,0,new QTableWidgetItem(QString("Table3")));
-    ui->tableBellOrder->setItem(1,0,new QTableWidgetItem(QString("Table4")));
-    ui->tableBellOrder->setItem(2,0,new QTableWidgetItem(QString("Table5")));
+//    ui->tableBellOrder->setRowCount(3);
+//    ui->tableBellOrder->setItem(0,0,new QTableWidgetItem(QString("Table3")));
+//    ui->tableBellOrder->setItem(1,0,new QTableWidgetItem(QString("Table4")));
+//    ui->tableBellOrder->setItem(2,0,new QTableWidgetItem(QString("Table5")));
     
 
     m_listCount=0;
+    b_listCount=0;
     connect(ui->btnTable1, SIGNAL(clicked()), this, SLOT(addTable1()));
     connect(ui->btnTable2, SIGNAL(clicked()), this, SLOT(addTable2()));
     connect(ui->btnTable3, SIGNAL(clicked()), this, SLOT(addTable3()));
@@ -186,12 +203,13 @@ void Home::servingStart(){
             retv=msgConfirmBox.warning(this, "Confirm",QString("Hello, Table%1!!\nDo you want to order something?").arg(destination), "No", "Yes");
             if(retv) {
                 for(int i=0;i<ui->tableBellOrder->rowCount();i++){
-                    QTextStream(stdout)<<ui->tableBellOrder->item(i,0)->text()<<endl;
-                    QTextStream(stdout)<<QString("Table%1").arg(destination)<<endl;
+//                    QTextStream(stdout)<<ui->tableBellOrder->item(i,0)->text()<<endl;
+//                    QTextStream(stdout)<<QString("Table%1").arg(destination)<<endl;
 
-                    //                    if(ui->tableBellOrder->item(i,0)->text()==QString("Table%1").arg(destination))
-                    //                        ui->tableBellOrder->removeRow(i);
+                    if(ui->tableBellOrder->item(i,0)->text().split("e")[1].toInt()==destination)
+                        ui->tableBellOrder->removeRow(i);
                 }
+
                 openPayment();
                 QEventLoop loop;
                 connect(this, SIGNAL(restart()), &loop, SLOT(quit()));
@@ -207,8 +225,13 @@ void Home::servingStart(){
 
     }
 
+    emit goToBellTableSignal();
 
-    goToTable(HOME);
+
+//    goToBellTable();
+
+
+//    goToTable(HOME);
 
 
 }
@@ -225,27 +248,28 @@ void Home::goToBellTable(){
         ui->tableBellOrder->removeRow(0);
 
         QTextStream(stdout)<<destination;
-        int mvResult;
-        while(true){
-            mvResult = goToTable(destination);
-            if(mvResult) {
-                // Hello Message
-                QMessageBox msgConfirmBox;
-                int retv=msgConfirmBox.warning(this, "Confirm",QString("Hello, Table%1!!\n If you want to order, press Order button").arg(destination), QMessageBox::Cancel|QMessageBox::Ok);
-                if(retv==QMessageBox::Ok) break;
-            }
-            else if(interrupted){
-                interrupted=false;
-                break;
+        QMessageBox msgConfirmBox;
+        int mvResult = goToTable(destination);
+        if(mvResult) {
+            t->battery-=10;
+            // Hello Message
+
+            int retv;
+
+            retv=msgConfirmBox.warning(this, "Confirm",QString("Hello, Table%1!!\nDo you want to order something?").arg(destination), "No", "Yes");
+            if(retv) {
+                openPayment();
+                QEventLoop loop;
+                connect(this, SIGNAL(restart()), &loop, SLOT(quit()));
+                loop.exec();
             }
 
-            while(gotFood){
-                //            sleep(1);
-                ;
-            }
-
+            ui->tableBellOrder->removeRow(0);
+            b_listCount--;
         }
-
+        else{
+            int retv=msgConfirmBox.warning(this, "Confirm",QString("Do you want to go again?"), "No", "Yes");
+        }
         goToTable(HOME);
     }
 }
@@ -327,31 +351,21 @@ int Home::goToTable(Location dest){
     return 1;
 
 }
-void Home::tableBellOrder(){
+void Home::addBellTable(int tableNo){
 
-    if(getOneByteValueOfExe(0)-48==0){
-        ui->tableBellOrder->insertRow(m_listCount);
-        ui->tableBellOrder->setItem(m_listCount,0,new QTableWidgetItem(QString("Table%1").arg(1)));
-        m_listCount++;
+    int exist=false;
+    for(int j=0;j<ui->tableBellOrder->rowCount();j++){
+        if(tableNo==ui->tableBellOrder->item(j,0)->text().split("e")[1].toInt())
+            exist=true;
     }
 
-    if(getOneByteValueOfExe(1)-48==0){
-        ui->tableBellOrder->insertRow(m_listCount);
-        ui->tableBellOrder->setItem(m_listCount,0,new QTableWidgetItem(QString("Table%1").arg(2)));
-        m_listCount++;
+    if(!exist){
+        ui->tableBellOrder->insertRow(b_listCount);
+        ui->tableBellOrder->setItem(b_listCount,0,new QTableWidgetItem(QString("Table%1").arg(tableNo)));
+        b_listCount++;
     }
 
-    if(getOneByteValueOfExe(2)-48==0){
-        ui->tableBellOrder->insertRow(m_listCount);
-        ui->tableBellOrder->setItem(m_listCount,0,new QTableWidgetItem(QString("Table%1").arg(3)));
-        m_listCount++;
-    }
-
-    if(getOneByteValueOfExe(3)-48==0){
-        ui->tableBellOrder->insertRow(m_listCount);
-        ui->tableBellOrder->setItem(m_listCount,0,new QTableWidgetItem(QString("Table%1").arg(4)));
-        m_listCount++;
-    }
+    if(stateLocation==HOME) emit goToBellTableSignal();
 }
 
 void Home::openPayment(){
@@ -373,39 +387,6 @@ void Home::openHomeAgain(){
 
 void Home::interruptMoving(){
     QTextStream(stdout)<<"EndEndEnd";
+    ui->lbstateLocation->setText("INTERRUPTED");
     interrupted=1;
-}
-
-unsigned char Home::getOneByteValueOfExe(int chan)
-{
-
-    FILE *pFile;
-    unsigned char value;
-
-    switch(chan)
-    {
-    case 0:
-        pFile = popen("cat /sys/class/gpio/gpio0/value", "r");
-        break;
-    case 1:
-        pFile = popen("cat /sys/class/gpio/gpio1/value", "r");
-        break;
-    case 2:
-        pFile = popen("cat /sys/class/gpio/gpio4/value", "r");
-        break;
-    case 3:
-        pFile = popen("cat /sys/class/gpio/gpio5/value", "r");
-        break;
-    default:
-        qDebug() << "xxx";
-        break;
-    }
-
-
-    value = fgetc(pFile);
-
-
-    pclose(pFile);
-
-    return value;
 }
