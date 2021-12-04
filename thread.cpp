@@ -1,6 +1,8 @@
 #include "thread.h"
-#include "./src/Position_moving2.c"
+// #include "./src/Position_moving2.c"
+#include "./src/SW_interrupted.c"
 #include <QTextStream>
+
 Thread::Thread(QObject *parent):
     QThread(parent)
 {
@@ -15,20 +17,15 @@ void Thread::run()
             system("/home/pi/myQt/Dae-Ta/src/moving");
             usleep(100000);
             QTextStream(stdout)<<"on";
-            r_value = bool_interrupt();
+            int r_value = bool_interrupt();
             if(r_value) emit interrupted();
         }
+
+        if(battery>50) system("/home/pi/myQt/Dae-Ta/src/full");
+        else if(battery>10) system("/home/pi/myQt/Dae-Ta/src/resting");
+        else system("/home/pi/myQt/Dae-Ta/src/nothing");
+
 
     }
 }
 
-//void Thread::movingStart(){
-//    while(true){
-//        //        Position_moving();
-//        system("/home/pi/myQt/Dae-Ta/src/moving");
-//        usleep(100000);
-//        //        system("/home/pi/myQt/Dae-Ta/src/moving_on");
-//        //        qDebug()<<"Thread";
-//        //        sleep(1);
-//    }
-//}

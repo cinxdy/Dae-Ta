@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "thread.h"
+#include "payment.h"
 
 enum Location {MOVING=-1,HOME, TABLE1,TABLE2,TABLE3,TABLE4,TABLE5,TABLE6}; // 0:home -1:moving n:tableN
 class LocationXY {
@@ -38,6 +39,7 @@ public slots:
 //    void movingStart();
 //    void addTable6();
     void btnOrderOrServeClicked();
+    void goToBellTable();
     void openPayment();
     void interruptMoving();
 
@@ -51,6 +53,7 @@ signals:
 private:
     Ui::Home *ui;
     Thread *t;
+    payment *p;
 };
 
 #endif // HOME_H

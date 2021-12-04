@@ -1,90 +1,77 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>payment</class>
- <widget class="QMainWindow" name="payment">
+ <widget class="QWidget" name="payment">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>652</width>
-    <height>481</height>
+    <width>512</width>
+    <height>419</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Payment</string>
   </property>
-  <widget class="QWidget" name="centralwidget">
-   <widget class="QTableWidget" name="tableMenu">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>10</y>
-      <width>301</width>
-      <height>391</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QTableWidget" name="tableCart">
-    <property name="geometry">
-     <rect>
-      <x>340</x>
-      <y>10</y>
-      <width>301</width>
-      <height>251</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLabel" name="lbPrice">
-    <property name="geometry">
-     <rect>
-      <x>400</x>
-      <y>280</y>
-      <width>68</width>
-      <height>22</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Price</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="btnPay">
-    <property name="geometry">
-     <rect>
-      <x>340</x>
-      <y>320</y>
-      <width>301</width>
-      <height>81</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Pay</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="lbPriceToPay">
-    <property name="geometry">
-     <rect>
-      <x>530</x>
-      <y>280</y>
-      <width>68</width>
-      <height>22</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Price</string>
-    </property>
-   </widget>
-  </widget>
-  <widget class="QMenuBar" name="menubar">
+  <widget class="QTableWidget" name="tableMenu">
    <property name="geometry">
     <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>652</width>
-     <height>28</height>
+     <x>10</x>
+     <y>10</y>
+     <width>250</width>
+     <height>391</height>
     </rect>
    </property>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QTableWidget" name="tableCart">
+   <property name="geometry">
+    <rect>
+     <x>290</x>
+     <y>10</y>
+     <width>200</width>
+     <height>251</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLabel" name="lbPriceToPay">
+   <property name="geometry">
+    <rect>
+     <x>350</x>
+     <y>280</y>
+     <width>68</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Price</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btnPay">
+   <property name="geometry">
+    <rect>
+     <x>290</x>
+     <y>320</y>
+     <width>200</width>
+     <height>81</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Pay</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="lbPrice">
+   <property name="geometry">
+    <rect>
+     <x>400</x>
+     <y>280</y>
+     <width>68</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Price</string>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections/>

@@ -9,6 +9,7 @@ class Thread : public QThread
     Q_OBJECT
 public:
     int m_flag;
+    int battery;
     explicit Thread(QObject *parent =0 );
 
 //public slots:
