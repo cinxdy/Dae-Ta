@@ -6,6 +6,7 @@
 #include <sys/types.h>
 #include <signal.h> 
 #include <linux/i2c.h>
+#include <stdbool.h>
 #include <linux/i2c-dev.h>
 #define MOD_LED 0x20
 
@@ -54,7 +55,7 @@ int bool_interrupt()
             btn_state[0] = 1;
             values[0]=0x02;
             values[1]=0xfb;
-            printf("LED Data = %x\n",values[1]);
+            printf("LED Data = %x!!!!!\n",values[1]);
             write(fd, values, 2);
             r_value=true;
         }
