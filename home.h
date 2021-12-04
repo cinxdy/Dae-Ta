@@ -2,8 +2,13 @@
 #define HOME_H
 
 #include <QMainWindow>
+<<<<<<< HEAD
 #include "thread.h"
 #include "payment.h"
+=======
+#include <QtMultimedia>
+#include <QtMultimediaWidgets>
+>>>>>>> 017192301eafaeadbc675d7ca059a1b41d70e39d
 
 enum Location {MOVING=-1,HOME, TABLE1,TABLE2,TABLE3,TABLE4,TABLE5,TABLE6}; // 0:home -1:moving n:tableN
 class LocationXY {
@@ -27,6 +32,9 @@ class Home : public QMainWindow
 public:
     explicit Home(QWidget *parent = nullptr);
     ~Home();
+    QMediaPlayer* m_Media;
+    QTimer* inputTimer;
+unsigned char getOneByteValueOfExe(int chan);
     
 public slots:
 //    void stateListener();
@@ -45,6 +53,11 @@ public slots:
 
     void servingStart();
     int goToTable(Location);
+<<<<<<< HEAD
+=======
+    void updateLocation();
+    void tableBellOrder();
+>>>>>>> 017192301eafaeadbc675d7ca059a1b41d70e39d
 
 signals:
     void stateLocationChanged();
