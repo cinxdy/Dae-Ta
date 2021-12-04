@@ -6,8 +6,8 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-//    Home w;
-//    w.show();
+    Home w;
+    w.show();
 
     payment p;
     p.show();

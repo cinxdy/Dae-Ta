@@ -32,6 +32,7 @@ public:
     QMediaPlayer* m_Media;
     QTimer* inputTimer;
 unsigned char getOneByteValueOfExe(int chan);
+void updateLocation();
     
 public slots:
 //    void stateListener();
@@ -50,7 +51,7 @@ public slots:
 
     void servingStart();
     int goToTable(Location);
-    void updateLocation();
+    //void updateLocation();
     void tableBellOrder();
 
 
