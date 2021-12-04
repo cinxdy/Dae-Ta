@@ -9,8 +9,8 @@ int main(int argc, char *argv[])
     Home w;
     w.show();
 
-    payment p;
-    p.show();
+    // payment p;
+    // p.show();
 
     return a.exec();
 }

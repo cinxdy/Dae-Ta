@@ -54,7 +54,6 @@ public slots:
     //void updateLocation();
     void tableBellOrder();
 
-
 signals:
     void stateLocationChanged();
 //    void movingStart();
