@@ -37,11 +37,15 @@ values[0] = i2c_reg;
 values[1] = temp_values[1];
 write(led_fd,values,2);
 read(led_fd,temp_values,8);
-values[1]= 0xBF&temp_values[1];
+values[1]= 0xCF&temp_values[1];
+printf("%d\n",temp_values[1]);
 write(led_fd,values,2);
+printf("%d\n",values[1]);
 read(led_fd,temp_values,8);
-values[1]= 0x80|temp_values[1];
+values[1]= 0xC0|temp_values[1];
+printf("%d\n",temp_values[1]);
 write(led_fd,values,2);
+printf("%d\n",values[1]);
 close(led_fd);
 return 0;
 }
