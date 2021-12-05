@@ -397,7 +397,7 @@ void Home::interruptMoving()
 
 void Home::updateMessage()
 {
-    //    s->message->stateLocation=stateLocation;
+        s->message->stateLocation=stateLocation;
     emit messageSendSignal();
 }
 

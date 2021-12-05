@@ -40,7 +40,8 @@ HEADERS += \
     thread.h \
     thread2.h\
     server.h\
-    stateEnum.h
+    stateEnum.h \
+    message.h
 
 
 FORMS += \

@@ -4,13 +4,7 @@
 #include <QTcpSocket>
 #include <QHostAddress>
 #include <QDataStream>
-#include "stateEnum.h"
-
-class Message{
- int stateLocation;
-
-};
-
+#include "message.h"
 
 class server: public QTcpServer
 {
@@ -18,7 +12,7 @@ class server: public QTcpServer
 public:
     server(QObject* parent=0);
 
-private:
+//private:
     Message *message;
 
 protected:
