@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "thread.h"
+#include "thread2.h"
 #include "payment.h"
 #include <QtMultimedia>
 #include <QtMultimediaWidgets>
@@ -30,11 +31,11 @@ class Home : public QMainWindow
 public:
     explicit Home(QWidget *parent = nullptr);
     ~Home();
-    QMediaPlayer* player;
+    // QMediaPlayer* player;
     QTimer* inputTimer;
 unsigned char getOneByteValueOfExe(int chan);
 void updateLocation();
-void interruptMoving();
+
     
 public slots:
 //    void stateListener();
@@ -49,6 +50,7 @@ public slots:
     void btnOrderOrServeClicked();
     void goToBellTable();
     void openPayment();
+    void interruptMoving();
 
 
     void servingStart();
@@ -57,15 +59,18 @@ public slots:
     void addBellTable(int);
     void openHomeAgain();
 
+
 signals:
     void stateLocationChanged();
     void restart();
     void goToBellTableSignal();
+    void interruptMoving_sig();
 //    void movingStart();
 
 private:
     Ui::Home *ui;
     Thread* t;
+    qth* t2;
     payment *p;
     socket *s;
 };
