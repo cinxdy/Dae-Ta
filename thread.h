@@ -10,7 +10,8 @@ class Thread : public QThread
 public:
     int m_flag;
     int battery;
-    explicit Thread(QObject *parent =0 );
+   explicit Thread(QObject* parent =0);
+
 
 //public slots:
 //    void movingStart();
@@ -18,6 +19,7 @@ public:
 signals:
     void goInterrupted();
     void closePayment();
+    void pushedButton(int);
 
 private:
     void run();
