@@ -43,6 +43,7 @@ write(cled_fd, values, 2);
 values[1] = 0x50; 
 printf("Set Value : 0x%02x...\n",values[1]);
 write(cled_fd,values,2);
+usleep(3000000);
 close(cled_fd);
 return 0;
 }

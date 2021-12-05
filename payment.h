@@ -12,6 +12,7 @@ class payment : public QWidget
     Q_OBJECT
 
 public:
+    int pay;
     explicit payment(QWidget *parent = nullptr);
     ~payment();
 
