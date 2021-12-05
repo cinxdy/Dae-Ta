@@ -1,0 +1,11 @@
+player =  new QMediaPlayer(this, QMediaPlayer::StreamPlayback);
+    QFile file("/Users/simonvaros/Desktop/hudba.wav");
+    file.open(QIODevice::ReadOnly);
+    QByteArray *ba = new QByteArray();
+    ba->append(file.readAll());
+    QBuffer *buffer = new QBuffer(ba);
+    buffer->open(QIODevice::ReadOnly);
+    buffer->reset();  // same as buffer.seek(0);
+    qDebug() << "Buffer size:" << buffer->size(); // is the file loaded
+    player->setMedia(QMediaContent(), buffer);
+    player->play();
