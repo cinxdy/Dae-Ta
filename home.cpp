@@ -106,6 +106,7 @@ void Home::btnOrderOrServeClicked(){
     }
     else if(stateLocation==MOVING) interruptMoving();
     else openPayment();
+
 }
 
 Home::~Home()
@@ -371,7 +372,7 @@ void Home::addBellTable(int tableNo)
 }
 
 void Home::openPayment()
-{
+{t->w_flag=2;
     p = new payment();
     p->show();
 //    this->hide();
@@ -403,8 +404,9 @@ void Home::updateMessage()
         s->message->stateLocation=stateLocation;
         s->message->bettery=t->battery;
         s->message->velocity=sleep_value;
-        s->message->interrupt=t->r_value;
-        s->message->moving=t->m_flag;
+//        s->message->interrupt=t->r_value;
+        if(t->r_value) s->message->moving=2;
+        else s->message->moving=t->m_flag;
         s->message->work=t->w_flag;
         //0=rest 1=seving, 2=order,3=admin
 

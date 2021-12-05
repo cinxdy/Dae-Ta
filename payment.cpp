@@ -1,4 +1,5 @@
 #include "payment.h"
+#include "thread".h"
 #include "ui_payment.h"
 #include <QMessageBox>
 
@@ -13,7 +14,7 @@ payment::payment(QWidget *parent) :
     ui->setupUi(this);
     m_listCount=0;
 //    system("/home/pi/myQt/Dae-Ta/src/order");
-    t->w_flag=2;
+
     ui->tableMenu->setRowCount(10);
     ui->tableMenu->setColumnCount(2);
     ui->tableMenu->setColumnWidth(0,120);
