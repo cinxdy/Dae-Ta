@@ -26,6 +26,7 @@ Home::Home(QWidget *parent) :
 
     t=new Thread(this);
     t->m_flag=0;
+    connect(t, SIGNAL(goInterrupted()), this, SLOT(interruptMoving()));
     t->start();
 
     system("echo 0 > /sys/class/gpio/export");
@@ -58,7 +59,7 @@ Home::Home(QWidget *parent) :
 
     destination=HOME;
     system("/home/pi/myQt/Dae-Ta/src/ldown");
-    
+
     if(stateLocation==0) ui->btnOrderOrServe->setText("Serve");
     else ui->btnOrderOrServe->setText("Order");
 
@@ -98,7 +99,7 @@ Home::Home(QWidget *parent) :
     ui->tableBellOrder->setItem(0,0,new QTableWidgetItem(QString("Table3")));
     ui->tableBellOrder->setItem(1,0,new QTableWidgetItem(QString("Table4")));
     ui->tableBellOrder->setItem(2,0,new QTableWidgetItem(QString("Table5")));
-    
+
 
     m_listCount=0;
     connect(ui->btnTable1, SIGNAL(clicked()), this, SLOT(addTable1()));
@@ -112,11 +113,27 @@ Home::Home(QWidget *parent) :
     // Serving Button
     connect(ui->btnOrderOrServe,SIGNAL(clicked()),this,SLOT(btnOrderOrServeClicked()));
 
+
 }
 
 
 void Home::btnOrderOrServeClicked(){
-
+//    QMediaPlayer* player =  new QMediaPlayer(this, QMediaPlayer::StreamPlayback);
+//        QFile file("/home/pi/myQt/Dae-Ta/src/letsgo.wav");
+//        file.open(QIODevice::ReadOnly);
+//        QByteArray *ba = new QByteArray();
+//        ba->append(file.readAll());
+//        QBuffer *buffer = new QBuffer(ba);
+//        buffer->open(QIODevice::ReadOnly);
+//        buffer->reset();  // same as buffer.seek(0);
+//        qDebug() << "Buffer size:" << buffer->size(); // is the file loaded
+//        player->setMedia(QMediaContent(), buffer);
+//        player->play();
+//    QMediaPlayer* m_media =new QMediaPlayer;
+//    m_media->setMedia(QUrl::fromLocalFile("/home/pi/myQt/Dae-Ta/src/letsgo.wav"));
+//    m_media->setVolume(50);
+//    m_media->play();
+    sleep(1);
     if(stateLocation==HOME) servingStart();
     else if(stateLocation==MOVING) interruptMoving();
     else openPayment();
@@ -154,13 +171,19 @@ void Home::addTable(int num){
 }
 
 void Home::servingStart(){
-
+    QMediaPlayer* player =  new QMediaPlayer(this, QMediaPlayer::StreamPlayback);
+        QFile file("/home/pi/myQt/Dae-Ta/src/letsgo.wav");
+        file.open(QIODevice::ReadOnly);
+        QByteArray *ba = new QByteArray();
+        ba->append(file.readAll());
+        QBuffer *buffer = new QBuffer(ba);
+        buffer->open(QIODevice::ReadOnly);
+        buffer->reset();  // same as buffer.seek(0);
+        qDebug() << "Buffer size:" << buffer->size(); // is the file loaded
+        player->setMedia(QMediaContent(), buffer);
+        player->play();
     QMessageBox msgConfirmBox;
-    QMediaPlayer* m_media =new QMediaPlayer;
-    m_media->setMedia(QUrl::fromLocalFile("/home/pi/myQt/Dae-Ta/src/letsgo.wav"));
-    m_media->setVolume(50);
 
-    m_media->play();
     while(ui->tableServingOrder->rowCount()!=0){
         if(ui->tableServingOrder->item(0,0)->text()=="Table1") destination=TABLE1;
         else if(ui->tableServingOrder->item(0,0)->text()=="Table2") destination=TABLE2;
@@ -280,15 +303,14 @@ int Home::goToTable(Location dest){
     t->m_flag=1;
 
     while(true){
-        if(locationX==destTable[dest]->x) break;
-        else if(locationX<destTable[dest]->x) locationX++;
-        else locationX--;
-
         if(interrupted) {
             stateLocation=INTERRUPTED;
             interrupted=0;
             return 0;
         }
+        if(locationX==destTable[dest]->x) break;
+        else if(locationX<destTable[dest]->x) locationX++;
+        else locationX--;
 
         ui->lbLocation->move(locationX,locationY);
         ui->lbLocation->repaint();
@@ -296,15 +318,18 @@ int Home::goToTable(Location dest){
     }
 
     while(true){
+        if(interrupted==1) {
+            stateLocation=INTERRUPTED;
+            interrupted=0;
+            break;
+            return 0;
+        }
+        if(interrupted==0) {
         if(locationY==destTable[dest]->y) break;
         else if(locationY<destTable[dest]->y) locationY++;
         else locationY--;
-
-        if(interrupted) {
-            stateLocation=INTERRUPTED;
-            interrupted=0;
-            return 0;
         }
+
 
         ui->lbLocation->move(locationX,locationY);
         ui->lbLocation->repaint();
@@ -372,8 +397,9 @@ void Home::openHomeAgain(){
 
 
 void Home::interruptMoving(){
-    QTextStream(stdout)<<"EndEndEnd";
     interrupted=1;
+    QTextStream(stdout)<<"EndEndEnd";
+
 }
 
 unsigned char Home::getOneByteValueOfExe(int chan)

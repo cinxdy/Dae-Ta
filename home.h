@@ -29,10 +29,11 @@ class Home : public QMainWindow
 public:
     explicit Home(QWidget *parent = nullptr);
     ~Home();
-    QMediaPlayer* m_Media;
+    QMediaPlayer* player;
     QTimer* inputTimer;
 unsigned char getOneByteValueOfExe(int chan);
 void updateLocation();
+void interruptMoving();
     
 public slots:
 //    void stateListener();
@@ -47,10 +48,10 @@ public slots:
     void btnOrderOrServeClicked();
     void goToBellTable();
     void openPayment();
-    void interruptMoving();
+
 
     void servingStart();
-    int goToTable(Location);
+    int goToTable(Location);//
     //void updateLocation();
     void tableBellOrder();
     void openHomeAgain();
@@ -62,7 +63,7 @@ signals:
 
 private:
     Ui::Home *ui;
-    Thread *t;
+    Thread* t;
     payment *p;
 };
 
