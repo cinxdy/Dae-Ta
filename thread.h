@@ -3,14 +3,20 @@
 
 #include<QThread>
 #include<QDebug>
+#include <QtMultimedia>
+#include <QtMultimediaWidgets>
 
 class Thread : public QThread
 {
     Q_OBJECT
 public:
+//    QMediaPlayer* player;
     int m_flag;
+    int r_value;
     int battery;
-   explicit Thread(QObject* parent =0);
+
+
+   explicit Thread(QObject *parent =nullptr);
 
 
 //public slots:
@@ -21,6 +27,7 @@ signals:
     void closePayment();
     void pushedButton(int);
     void sendMessageSignal();
+
 
 private:
     void run();

@@ -16,10 +16,10 @@ unsigned char getOneByteValueOfExe(int chan)
     case 1:
         pFile = popen("cat /sys/class/gpio/gpio1/value", "r");
         break;
-    case 2:
+    case 4:
         pFile = popen("cat /sys/class/gpio/gpio4/value", "r");
         break;
-    case 3:
+    case 5:
         pFile = popen("cat /sys/class/gpio/gpio5/value", "r");
         break;
     default:

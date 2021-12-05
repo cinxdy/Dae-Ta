@@ -23,7 +23,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 CONFIG += c++11\
-CONFIG   += console
+    console
 
 SOURCES += \
         main.cpp \
@@ -31,13 +31,13 @@ SOURCES += \
     payment.cpp \
     thread.cpp \
     src/pushedButton.c \
-    server.cpp \
+    thread2.cpp
 
 HEADERS += \
         home.h \
     payment.h \
     thread.h \
-    server.h \
+    thread2.h
 
 FORMS += \
         home.ui \

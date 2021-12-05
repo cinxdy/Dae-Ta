@@ -6,9 +6,15 @@ Home::Home(QWidget *parent) : QMainWindow(parent),
 {
     // Thread setup
     t = new Thread(this);
-    t->m_flag = 0;
+    t2=new qth(this);
+    t->m_flag=0;
+    t2->m_flag=0;
+    t->r_value=0;
     connect(t, SIGNAL(goInterrupted()), this, SLOT(interruptMoving()));
+    
     t->start();
+    t2->start();
+
 
     // Server setup
     s = new server();
@@ -39,7 +45,7 @@ Home::Home(QWidget *parent) : QMainWindow(parent),
     //    connect(inputTimer, SIGNAL(timeout()),this, SLOT(tableBellOrder()));
 
     connect(t, SIGNAL(pushedButton(int)), this, SLOT(addBellTable(int)));
-    connect(this, SIGNAL(goToBellTableSignal()), this, SLOT(goToBellTable()));
+    connect(this, SIGNAL(goToBellTableSignal()),this,SLOT(goToBellTable()));
 
     // UI setup
     ui->setupUi(this);
@@ -96,19 +102,25 @@ Home::Home(QWidget *parent) : QMainWindow(parent),
     connect(ui->btnTable3, SIGNAL(clicked()), this, SLOT(addTable3()));
     connect(ui->btnTable4, SIGNAL(clicked()), this, SLOT(addTable4()));
     connect(ui->btnTable5, SIGNAL(clicked()), this, SLOT(addTable5()));
+    connect(this, SIGNAL(interruptMoving_sig()), this, SLOT(interruptMoving()));
+
 
     // Serving Button
     connect(ui->btnOrderOrServe, SIGNAL(clicked()), this, SLOT(btnOrderOrServeClicked()));
 }
 
-void Home::btnOrderOrServeClicked()
-{
-    if (stateLocation == HOME)
-        servingStart();
-    else if (stateLocation == MOVING)
-        interruptMoving();
-    else
-        openPayment();
+
+void Home::btnOrderOrServeClicked(){
+
+    QMediaPlayer* player =new QMediaPlayer;
+    player->setMedia(QUrl::fromLocalFile("/home/pi/myQt/Dae-Ta/src/go.wav"));
+    player->setVolume(50);
+    player->play();
+
+    if(stateLocation==HOME) servingStart();
+    else if(stateLocation==MOVING) interruptMoving();
+    else openPayment();
+
 }
 
 Home::~Home()
@@ -138,19 +150,21 @@ void Home::addTable(int num)
     m_listCount++;
 }
 
-void Home::servingStart()
-{
-    QMediaPlayer *player = new QMediaPlayer(this, QMediaPlayer::StreamPlayback);
-    QFile file("/home/pi/myQt/Dae-Ta/src/letsgo.wav");
-    file.open(QIODevice::ReadOnly);
-    QByteArray *ba = new QByteArray();
-    ba->append(file.readAll());
-    QBuffer *buffer = new QBuffer(ba);
-    buffer->open(QIODevice::ReadOnly);
-    buffer->reset();                              // same as buffer.seek(0);
-    qDebug() << "Buffer size:" << buffer->size(); // is the file loaded
-    player->setMedia(QMediaContent(), buffer);
-    player->play();
+void Home::servingStart(){
+
+//    QMediaPlayer* player =  new QMediaPlayer(this, QMediaPlayer::StreamPlayback);
+//    QFile file("/home/pi/myQt/Dae-Ta/src/letsgo.wav");
+//    file.open(QIODevice::ReadOnly);
+//    QByteArray *ba = new QByteArray();
+//    ba->append(file.readAll());
+//    QBuffer *buffer = new QBuffer(ba);
+//    buffer->open(QIODevice::ReadOnly);
+//    buffer->reset();  // same as buffer.seek(0);
+//    qDebug() << "Buffer size:" << buffer->size(); // is the file loaded
+//    player->setMedia(QMediaContent(), buffer);
+//    player->play();
+
+
     QMessageBox msgConfirmBox;
 
     while (ui->tableServingOrder->rowCount() != 0)
@@ -178,16 +192,23 @@ void Home::servingStart()
             while (true)
             {
                 // Speaker Guide
-                retv = msgConfirmBox.warning(this, "Confirm", QString("Hello, Table%1!!\nDid you get your plates?").arg(destination), "No", "Yes");
-                if (retv)
-                    break;
+                QMediaPlayer* player =new QMediaPlayer;
+                player->setMedia(QUrl::fromLocalFile("/home/pi/myQt/Dae-Ta/src/hi.wav"));
+                player->setVolume(30);
+                player->play();
+                player->setMedia(QUrl::fromLocalFile("/home/pi/myQt/Dae-Ta/src/food.wav"));
+                player->setVolume(30);
+                player->play();
+                retv=msgConfirmBox.warning(this, "Confirm",QString("Hello, Table%1!!\nDid you get your plates?").arg(destination), "No", "Yes");
+                player->setMedia(QUrl::fromLocalFile("/home/pi/myQt/Dae-Ta/src/eat.wav"));
+                player->setVolume(30);
+                player->play();
+                if(retv) break;
             }
 
-            retv = msgConfirmBox.warning(this, "Confirm", QString("Hello, Table%1!!\nDo you want to order something?").arg(destination), "No", "Yes");
-            if (retv)
-            {
-                for (int i = 0; i < ui->tableBellOrder->rowCount(); i++)
-                {
+            retv=msgConfirmBox.warning(this, "Confirm",QString("Hello, Table%1!!\nDo you want to order something?").arg(destination), "No", "Yes");
+            if(retv) {
+                for(int i=0;i<ui->tableBellOrder->rowCount();i++){
                     //                    QTextStream(stdout)<<ui->tableBellOrder->item(i,0)->text()<<endl;
                     //                    QTextStream(stdout)<<QString("Table%1").arg(destination)<<endl;
 
@@ -237,7 +258,11 @@ void Home::goToBellTable()
         {
             t->battery -= 10;
             // Hello Message
-
+            QMediaPlayer* player =new QMediaPlayer;
+            player->setMedia(QUrl::fromLocalFile("/home/pi/myQt/Dae-Ta/src/arrived.wav"));
+            player->setMedia(QUrl::fromLocalFile("/home/pi/myQt/Dae-Ta/src/hi.wav"));
+            player->setVolume(30);
+            player->play();
             int retv;
 
             retv = msgConfirmBox.warning(this, "Confirm", QString("Hello, Table%1!!\nDo you want to order something?").arg(destination), "No", "Yes");
@@ -281,54 +306,43 @@ int Home::goToTable(Location dest)
     ui->lbstateLocation->setText("MOVING");
     system("/home/pi/myQt/Dae-Ta/src/mmoving");
 
-    t->m_flag = 1;
+    t->m_flag=1;
+    t2->m_flag=1;
 
-    while (true)
-    {
-        if (interrupted)
-        {
-            stateLocation = INTERRUPTED;
-            interrupted = 0;
-            return 0;
-        }
-        if (locationX == destTable[dest]->x)
-            break;
-        else if (locationX < destTable[dest]->x)
-            locationX++;
-        else
-            locationX--;
-
-        ui->lbLocation->move(locationX, locationY);
+    while(true){
+                if(t->r_value) {
+                    stateLocation=INTERRUPTED;
+                    emit interruptMoving_sig();
+//                    interrupted=0;
+                    return 0;
+                }
+        if(locationX==destTable[dest]->x) break;
+        else if(locationX<destTable[dest]->x) locationX++;
+        else locationX--;
+        ui->lbLocation->move(locationX,locationY);
         ui->lbLocation->repaint();
-        //        system("/home/pi/myQt/Dae-Ta/src/moving_on");
     }
 
-    while (true)
-    {
-        if (interrupted == 1)
-        {
-            stateLocation = INTERRUPTED;
-            interrupted = 0;
-            break;
-            return 0;
+    while(true){
+                if(t->r_value) {
+                    stateLocation=INTERRUPTED;
+                    emit interruptMoving_sig();
+//                    interrupted=0;
+//                    break;
+                    return 0;
+                }
+        if(interrupted==0) {
+            if(locationY==destTable[dest]->y) break;
+            else if(locationY<destTable[dest]->y) locationY++;
+            else locationY--;
         }
-        if (interrupted == 0)
-        {
-            if (locationY == destTable[dest]->y)
-                break;
-            else if (locationY < destTable[dest]->y)
-                locationY++;
-            else
-                locationY--;
-        }
-
-        ui->lbLocation->move(locationX, locationY);
+        ui->lbLocation->move(locationX,locationY);
         ui->lbLocation->repaint();
-        //        system("/home/pi/myQt/Dae-Ta/src/moving_on");
     }
 
-    t->m_flag = 0;
-    stateLocation = dest;
+    t->m_flag=0;
+    t2->m_flag=0;
+    stateLocation=dest;
 
     if (!stateLocation)
     {
@@ -397,3 +411,5 @@ void Home::updateMessage()
     //    s->message->stateLocation=stateLocation;
     emit messageSendSignal();
 }
+
+
