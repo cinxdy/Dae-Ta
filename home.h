@@ -6,6 +6,7 @@
 #include "payment.h"
 #include <QtMultimedia>
 #include <QtMultimediaWidgets>
+#include "socket.h"
 
 enum Location {MOVING=-1,HOME, TABLE1,TABLE2,TABLE3,TABLE4,TABLE5,INTERRUPTED}; // 0:home -1:moving n:tableN
 class LocationXY {
@@ -53,18 +54,20 @@ public slots:
     void servingStart();
     int goToTable(Location);//
     //void updateLocation();
-    void tableBellOrder();
+    void addBellTable(int);
     void openHomeAgain();
 
 signals:
     void stateLocationChanged();
     void restart();
+    void goToBellTableSignal();
 //    void movingStart();
 
 private:
     Ui::Home *ui;
     Thread* t;
     payment *p;
+    socket *s;
 };
 
 #endif // HOME_H

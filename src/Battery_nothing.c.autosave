@@ -29,7 +29,7 @@ int main(int argc, char** argv){
     values[0] = i2c_reg;
     values[1] = temp_values[1];
     write(led_fd,values, 2);
-    //Output Port 1
+    //Output Port 1es[0] = i2c_reg;
     i2c_reg = 0x03;
     values[0] = i2c_reg;
 
