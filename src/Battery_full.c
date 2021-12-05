@@ -35,8 +35,6 @@ write(led_fd,values, 2);
 i2c_reg = 0x03;
 values[0] = i2c_reg; 
 
-
-
 values[1] = temp_values[1];
 write(led_fd,values,2);
 read(led_fd,temp_values,8);
