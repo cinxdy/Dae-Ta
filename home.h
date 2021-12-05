@@ -2,20 +2,22 @@
 #define HOME_H
 
 #include <QMainWindow>
-#include "thread.h"
-#include "payment.h"
 #include <QtMultimedia>
 #include <QtMultimediaWidgets>
-#include "socket.h"
+#include <QTimer>
+#include <QString>
+#include <QMessageBox>
+#include <QTextStream>
+#include <QThread>
+#include <QTcpSocket>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
 
-enum Location {MOVING=-1,HOME, TABLE1,TABLE2,TABLE3,TABLE4,TABLE5,INTERRUPTED}; // 0:home -1:moving n:tableN
-class LocationXY {
-    public:
-        int x;
-        int y;
-};
-
-///////////////////
+#include "thread.h"
+#include "server.h"
+#include "payment.h"
+#include "stateEnum.h"
 
 
 namespace Ui {
@@ -30,30 +32,33 @@ class Home : public QMainWindow
 public:
     explicit Home(QWidget *parent = nullptr);
     ~Home();
+
+    int m_listCount;
+    int b_listCount;
+    int locationX;
+    int locationY;
+    int interrupted;
+    Location stateLocation; // 0:home -1:moving n:tableN
+    Location destination;
+
     QMediaPlayer* player;
     QTimer* inputTimer;
-unsigned char getOneByteValueOfExe(int chan);
-void updateLocation();
-void interruptMoving();
-    
-public slots:
-//    void stateListener();
-    void addTable(int);
+    unsigned char getOneByteValueOfExe(int chan);
+    void interruptMoving();
     void addTable1();
     void addTable2();
     void addTable3();
     void addTable4();
     void addTable5();
-//    void movingStart();
-//    void addTable6();
+    
+public slots:
+    void addTable(int);
     void btnOrderOrServeClicked();
     void goToBellTable();
     void openPayment();
-
-
+    void updateMessage();
     void servingStart();
-    int goToTable(Location);//
-    //void updateLocation();
+    int goToTable(Location);
     void addBellTable(int);
     void openHomeAgain();
 
@@ -61,13 +66,13 @@ signals:
     void stateLocationChanged();
     void restart();
     void goToBellTableSignal();
-//    void movingStart();
+    void messageSendSignal();
 
 private:
     Ui::Home *ui;
     Thread* t;
     payment *p;
-    socket *s;
+    server *s;
 };
 
 #endif // HOME_H

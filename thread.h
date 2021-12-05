@@ -20,9 +20,11 @@ signals:
     void goInterrupted();
     void closePayment();
     void pushedButton(int);
+    void sendMessageSignal();
 
 private:
     void run();
+
 
 
 

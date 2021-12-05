@@ -33,6 +33,8 @@ void Thread::run()
             if(getOneByteValueOfExe(i)-48==0) emit pushedButton(i+1);
         }
 
+        emit sendMessageSignal();
+
     }
 }
 
