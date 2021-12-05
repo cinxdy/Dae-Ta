@@ -26,6 +26,7 @@ public slots:
 
 signals:
     void changeVSignal(int);
+    void connected();
 
 private:
     QTcpSocket *client;

@@ -68,6 +68,8 @@ public slots:
     void interruptMoving();
     void changeV(int );
 
+    void timerSet();
+
 
 signals:
     void stateLocationChanged();

@@ -19,14 +19,10 @@ Home::Home(QWidget *parent) : QMainWindow(parent),
 
     t->battery = 100;
 
-
-    inputTimer = new QTimer(this); // Read from Dev
-    inputTimer->start(500);
-
-       connect(inputTimer, SIGNAL(timeout()),this, SLOT(updateMessage()));
     // Server setup
     s = new server();
-//    connect(t, SIGNAL(messageSendSignal()), this, SLOT(updateMessage()));
+
+    connect(s, SIGNAL(connected()),this, SLOT(timerSet()));
     connect(this, SIGNAL(messageSendSignal()), s, SLOT(sendMessage()));
     connect(s, SIGNAL(changeVSignal(int)),this, SLOT(changeV(int)));
 
@@ -401,11 +397,11 @@ void Home::interruptMoving()
 void Home::updateMessage()
 {
         s->message->stateLocation=stateLocation;
-//        s->message->bettery=t->battery;
-//        s->message->velocity=sleep_value;
-//        s->message->interrupt=t->r_value;
-//        s->message->moving=t->m_flag;
-//        s->message->work=t->w_flag;
+        s->message->bettery=t->battery;
+        s->message->velocity=sleep_value;
+        s->message->interrupt=t->r_value;
+        s->message->moving=t->m_flag;
+        s->message->work=t->w_flag;
         //0=admin, 1= ,
 
     emit messageSendSignal();
@@ -421,3 +417,10 @@ void Home::changeV(int v){
 }
 
 
+void Home::timerSet(){
+
+    inputTimer = new QTimer(this); // Read from Dev
+    inputTimer->start(500);
+
+    connect(inputTimer, SIGNAL(timeout()),this, SLOT(updateMessage()));
+}
