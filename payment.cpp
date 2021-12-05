@@ -12,7 +12,7 @@ payment::payment(QWidget *parent) :
 {
     ui->setupUi(this);
     m_listCount=0;
-
+    system("/home/pi/myQt/Dae-Ta/src/order");
     ui->tableMenu->setRowCount(10);
     ui->tableMenu->setColumnCount(2);
     ui->tableMenu->setColumnWidth(0,120);
@@ -76,6 +76,8 @@ void payment::updateSum(){
 void payment::btnPayClicked(){
     QMessageBox msgConfirmBox;
     int retv=msgConfirmBox.warning(this, "Confirm",QString("Total price is %1 Korean Won.\nDo you want to pay and close the order page?").arg(ui->lbPrice->text()), "No","Yes");
+    pay=1;
+    system("/home/pi/myQt/Dae-Ta/src/succeed");
     if(retv) emit closePayment();
 }
 

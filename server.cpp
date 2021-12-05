@@ -6,6 +6,7 @@
 
 server::server(QObject* parent): QTcpServer(parent)
 {
+    message=new Message();
     printf("server created\n");
 
     bool success=listen(QHostAddress::Any,8520);
@@ -45,6 +46,7 @@ void server::sendMessage(){
     QByteArray dat;
     QDataStream out(&dat, QIODevice::WriteOnly);
     out<<message;
-
+    printf("write\n");
+    QTextStream(stdout)<<message;
     client->write(dat);
 }

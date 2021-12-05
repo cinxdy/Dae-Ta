@@ -13,6 +13,9 @@
   <property name="windowTitle">
    <string>Payment</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">background-color:#ECECEC;</string>
+  </property>
   <widget class="QTableWidget" name="tableMenu">
    <property name="geometry">
     <rect>
@@ -21,6 +24,11 @@
      <width>250</width>
      <height>391</height>
     </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color:rgb(217,229,255);
+border-image: url(:/transparent.png);
+image: url(:/qt-logo.ico);</string>
    </property>
   </widget>
   <widget class="QTableWidget" name="tableCart">
@@ -32,6 +40,11 @@
      <height>251</height>
     </rect>
    </property>
+   <property name="styleSheet">
+    <string notr="true">background-color:rgb(217,229,255);
+border-image: url(:/transparent.png);
+image: url(:/qt-logo.ico);</string>
+   </property>
   </widget>
   <widget class="QLabel" name="lbPriceToPay">
    <property name="geometry">
@@ -41,6 +54,11 @@
      <width>68</width>
      <height>22</height>
     </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color:#4374D9;
+size:15px;
+	font: 45 oblique 12pt &quot;URW Gothic L&quot;;</string>
    </property>
    <property name="text">
     <string>Price</string>
@@ -54,6 +72,22 @@
      <width>200</width>
      <height>81</height>
     </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton{
+background-color:#FFFFFF;
+border: 2px solid #6799FF;
+border-radius:20px;
+font: 45 oblique 20px &quot;URW Gothic L&quot;;
+
+}
+
+QPushButton:pressed{
+background-color:rgb(197, 218, 232)
+border: 2px solid #6799FF;
+border-radius:20px;
+font-size:20px;
+}</string>
    </property>
    <property name="text">
     <string>Pay</string>
