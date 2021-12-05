@@ -39,10 +39,10 @@ void Thread::run()
         int B_value = bool_Bell();
         if(B_value) emit pushedButton(5);
 
-        if(battery>75) system("/home/pi/myQt/Dae-Ta/src/full");
-        else if(battery>50) system("/home/pi/myQt/Dae-Ta/src/3quarter");
-        else if(battery>25) system("/home/pi/myQt/Dae-Ta/src/half");
-        else if(battery>10) system("/home/pi/myQt/Dae-Ta/src/quarter");
+        if(bettery>75) system("/home/pi/myQt/Dae-Ta/src/full");
+        else if(bettery>50) system("/home/pi/myQt/Dae-Ta/src/3quarter");
+        else if(bettery>25) system("/home/pi/myQt/Dae-Ta/src/half");
+        else if(bettery>10) system("/home/pi/myQt/Dae-Ta/src/quarter");
         else system("/home/pi/myQt/Dae-Ta/src/nothing");
 
 //        for (int i=0;i<2;i++) {
