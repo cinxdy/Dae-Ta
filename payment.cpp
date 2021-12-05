@@ -76,6 +76,7 @@ void payment::updateSum(){
 void payment::btnPayClicked(){
     QMessageBox msgConfirmBox;
     int retv=msgConfirmBox.warning(this, "Confirm",QString("Total price is %1 Korean Won.\nDo you want to pay and close the order page?").arg(ui->lbPrice->text()), "No","Yes");
+    system("/home/pi/myQt/Dae-Ta/src/succeed");
     if(retv) emit closePayment();
 }
 

@@ -56,7 +56,7 @@ Home::Home(QWidget *parent) : QMainWindow(parent),
     // UI setup
     ui->setupUi(this);
     sleep_value=1;
-    locationX = 170;
+    locationX = 100;
     locationY = 170;
     stateLocation = HOME;
     ui->lbstateLocation->setText("HOME");
