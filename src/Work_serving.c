@@ -8,18 +8,13 @@
 #include <linux/i2c.h>
 #include <linux/i2c-dev.h>
 #define MOD_LED 0x20
-volatile int g_loop=1;
-void sigint_handle(int sig)
-{ printf("...Terminated!\n");
-g_loop = 0;
-}
+
 int main(int argc, char** argv)
 { int cled_fd;
 int retv;
 char value;
 char values[2]={0,};
 // Signal Setting
-signal(SIGINT, sigint_handle); 
 cled_fd = open("/dev/i2c-1",O_RDWR);
 if(cled_fd<3)
 {
@@ -43,7 +38,7 @@ write(cled_fd, values, 2);
 values[1] = 0x50; 
 printf("Set Value : 0x%02x...\n",values[1]);
 write(cled_fd,values,2);
-usleep(3000000);
+
 close(cled_fd);
 return 0;
 }

@@ -14,6 +14,7 @@ public:
     int m_flag;
     int r_value;
     int bettery;
+    int B_value;
     int w_flag;
 
 

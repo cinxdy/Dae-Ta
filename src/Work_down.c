@@ -42,6 +42,7 @@ write(cled_fd, values, 2);
 
 values[1] = 0xff;
 write(cled_fd,values,2);
+
 close(cled_fd);
 return 0;
 }

@@ -58,6 +58,7 @@ Home::Home(QWidget *parent) : QMainWindow(parent),
 
     destination = HOME;
 //    system("/home/pi/myQt/Dae-Ta/src/ldown");
+//    system("/home/pi/myQt/Dae-Ta/src/resting");
 
     if (stateLocation == 0)
         ui->btnOrderOrServe->setText("Serve");
@@ -99,12 +100,13 @@ void Home::btnOrderOrServeClicked(){
         player->setMedia(QUrl::fromLocalFile("/home/pi/myQt/Dae-Ta/src/go.wav"));
         player->setVolume(50);
         player->play();
-        system("/home/pi/myQt/Dae-Ta/src/serving");
+
          t->w_flag=2;
         servingStart();
     }
     else if(stateLocation==MOVING) interruptMoving();
     else openPayment();
+
 }
 
 Home::~Home()
@@ -135,7 +137,7 @@ void Home::addTable(int num)
 }
 
 void Home::servingStart(){
-
+//    system("/home/pi/myQt/Dae-Ta/src/serving");
     //    QMediaPlayer* player =  new QMediaPlayer(this, QMediaPlayer::StreamPlayback);
     //    QFile file("/home/pi/myQt/Dae-Ta/src/letsgo.wav");
     //    file.open(QIODevice::ReadOnly);
@@ -221,7 +223,7 @@ void Home::servingStart(){
 }
 
 void Home::goToBellTable()
-{
+{system("/home/pi/myQt/Dae-Ta/src/mmoving");
     while (ui->tableBellOrder->rowCount() != 0)
     {
         if (ui->tableBellOrder->item(0, 0)->text() == "Table1")
@@ -286,16 +288,17 @@ int Home::goToTable(Location dest)
     destTable[2] = new LocationXY{310,80};
     destTable[3] = new LocationXY{440,80};
     destTable[4] = new LocationXY{180,250};
-    destTable[5] = new LocationXY{100,170};
+    destTable[5] = new LocationXY{390,250};
 
     stateLocation = MOVING;
     ui->lbstateLocation->setText("MOVING");
 //    system("/home/pi/myQt/Dae-Ta/src/mmoving");
+//    system("/home/pi/myQt/Dae-Ta/src/serving");
 
-
+t->w_flag=1;
     t->m_flag=1;
     t2->m_flag=1;
-
+system("/home/pi/myQt/Dae-Ta/src/mmoving");
     while(true){
         if(t->r_value) {
             stateLocation=INTERRUPTED;
@@ -329,18 +332,20 @@ int Home::goToTable(Location dest)
 
     t->m_flag=0;
     t2->m_flag=0;
-    stateLocation=dest;
 
+    stateLocation=dest;
     if (!stateLocation)
     {
         ui->lbstateLocation->setText("HOME");
         system("/home/pi/myQt/Dae-Ta/src/home");
-        system("/home/pi/myQt/Dae-Ta/src/rest");
+        t->w_flag=0;
+//        system("/home/pi/myQt/Dae-Ta/src/rest");
     }
     else
     {
         ui->lbstateLocation->setText(QString("TABLE%1").arg(stateLocation));
         system("/home/pi/myQt/Dae-Ta/src/table");
+
     }
 
     system("/home/pi/myQt/Dae-Ta/src/stopped");
@@ -367,7 +372,7 @@ void Home::addBellTable(int tableNo)
 }
 
 void Home::openPayment()
-{
+{t->w_flag=2;
     p = new payment();
     p->show();
 //    this->hide();
@@ -389,7 +394,7 @@ void Home::openHomeAgain()
 }
 
 void Home::interruptMoving()
-{   system("/home/pi/myQt/Dae-Ta/src/winterrupt");
+{   //system("/home/pi/myQt/Dae-Ta/src/winterrupt");
     ui->lbstateLocation->setText("INTERRUPTED");
     interrupted = 1;
 }
@@ -399,10 +404,11 @@ void Home::updateMessage()
         s->message->stateLocation=stateLocation;
         s->message->bettery=t->bettery;
         s->message->velocity=sleep_value;
-        s->message->interrupt=t->r_value;
-        s->message->moving=t->m_flag;
+//        s->message->interrupt=t->r_value;
+        if(t->r_value) s->message->moving=2;
+        else s->message->moving=t->m_flag;
         s->message->work=t->w_flag;
-        //0=admin, 1= ,
+        //0=rest 1=seving, 2=order,3=admin
 
     emit messageSendSignal();
 }
