@@ -12,7 +12,7 @@ payment::payment(QWidget *parent) :
 {
     ui->setupUi(this);
     m_listCount=0;
-    system("/home/pi/myQt/Dae-Ta/src/order");
+//    system("/home/pi/myQt/Dae-Ta/src/order");
     ui->tableMenu->setRowCount(10);
     ui->tableMenu->setColumnCount(2);
     ui->tableMenu->setColumnWidth(0,120);

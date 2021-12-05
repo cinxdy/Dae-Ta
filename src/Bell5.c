@@ -56,9 +56,10 @@ int bool_Bell()
             btn_state[1] = 1;
             values[0]=0x02;
             values[1]=0xf7;
+            B_value=true;
             printf("LED Data = %x!!!!!\n",values[1]);
             write(fd, values, 2);
-            B_value=true;
+
         }
     }
     else {
@@ -67,9 +68,10 @@ int bool_Bell()
             btn_state[1]=0;
             values[0]=0x02;
             values[1]=0xff;
+            B_value=false;
             printf("LED Data = %x\n",values[1]);
             write(fd, values, 2);
-            B_value=false;
+
         }
 
 

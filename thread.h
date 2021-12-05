@@ -13,6 +13,7 @@ public:
 //    QMediaPlayer* player;
     int m_flag;
     int r_value;
+    int B_value;
     int battery;
     int w_flag;
 

@@ -3,6 +3,7 @@
 #include "./src/SW_interrupted.c"
 #include "./src/pushedButton.c"
 #include "./src/Bell5.c"
+//#include "./src/sw_led.c"
 #include <QTextStream>
 
 Thread::Thread(QObject *parent):
@@ -16,13 +17,13 @@ void Thread::run()
     system("/home/pi/myQt/Dae-Ta/src/ldown");
     system("/home/pi/myQt/Dae-Ta/src/cdown");
     system("/home/pi/myQt/Dae-Ta/src/down");
-//    system("/home/pi/myQt/Dae-Ta/src/admin");
-//    w_flag=0;
+
+    w_flag=0;
     while(true){
         if(m_flag){
             system("/home/pi/myQt/Dae-Ta/src/moving");
             usleep(100000);
-//            system("/home/pi/myQt/Dae-Ta/src/mmoving");
+
 
 //            QTextStream(stdout)<<"on";
 //            int r_value = bool_interrupt();
@@ -30,10 +31,10 @@ void Thread::run()
 //            QTextStream(stdout)<<"SWSWSWWSWSWSW"<<r_value<<endl;
 //            if(r_value) emit goInterrupted();
         }
-
+//bool_sw();
         r_value = bool_interrupt();
         if(r_value) {system("/home/pi/myQt/Dae-Ta/src/minterrupt");
-//            w_flag=1;
+            w_flag=1;
         }
 
         int B_value = bool_Bell();
@@ -57,7 +58,7 @@ void Thread::run()
 
 
 
-        emit sendMessageSignal();
+//        emit sendMessageSignal();
 
     }
 }
