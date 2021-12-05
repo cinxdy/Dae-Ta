@@ -55,8 +55,8 @@ public:
     void addTable5();
 
     
-public slots:
-    void addTable(int);
+//public slots:
+//    void addTable(int);
     
 public slots:
     void addTable(int);
