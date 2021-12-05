@@ -19,13 +19,12 @@ Home::Home(QWidget *parent) : QMainWindow(parent),
 
     t->battery = 100;
 
-
     // Server setup
     s = new server();
-    connect(t, SIGNAL(sendMessageSignal()), this, SLOT(updateMessage()));
+
+    connect(s, SIGNAL(connected()),this, SLOT(timerSet()));
     connect(this, SIGNAL(messageSendSignal()), s, SLOT(sendMessage()));
-    connect(s, SIGNAL(faster()),this,SLOT(faster()));
-    connect(s, SIGNAL(slower()),this,SLOT(slower()));
+    connect(s, SIGNAL(changeVSignal(int)),this, SLOT(changeV(int)));
 
     // Device setup
     system("sudo echo 0 > /sys/class/gpio/export");
@@ -45,10 +44,6 @@ Home::Home(QWidget *parent) : QMainWindow(parent),
     system("sudo echo in > /sys/class/gpio/gpio5/direction");
     usleep(1000);
 
-     inputTimer = new QTimer(this); // Read from Dev
-     inputTimer->start(500);
-
-    //    connect(inputTimer, SIGNAL(timeout()),this, SLOT(tableBellOrder()));
 
     connect(t, SIGNAL(pushedButton(int)), this, SLOT(addBellTable(int)));
     connect(this, SIGNAL(goToBellTableSignal()),this,SLOT(goToBellTable()));
@@ -405,24 +400,30 @@ void Home::interruptMoving()
 void Home::updateMessage()
 {
         s->message->stateLocation=stateLocation;
-//        s->message->bettery=t->battery;
-//        s->message->velocity=sleep_value;
-//        s->message->interrupt=t->r_value;
-//        s->message->moving=t->m_flag;
-//        s->message->work=t->w_flag;
+        s->message->bettery=t->battery;
+        s->message->velocity=sleep_value;
+        s->message->interrupt=t->r_value;
+        s->message->moving=t->m_flag;
+        s->message->work=t->w_flag;
         //0=admin, 1= ,
 
     emit messageSendSignal();
 }
 
-void Home::faster(){
-    sleep_value/=10;
-    if(sleep_value<1) sleep_value =1;
+
+void Home::changeV(int v){
+    int s=100000;
+    for(int i=0;i<v;i++)
+        s/=10;
+    
+    sleep_value=s;
 }
 
-void Home::slower(){
-    sleep_value*=10;
-    if(sleep_value>10000000) sleep_value =10000000;
+
+void Home::timerSet(){
+
+    inputTimer = new QTimer(this); // Read from Dev
+    inputTimer->start(500);
+
+    connect(inputTimer, SIGNAL(timeout()),this, SLOT(updateMessage()));
 }
-
-

@@ -28,7 +28,7 @@ signals:
     void goInterrupted();
     void closePayment();
     void pushedButton(int);
-    void sendMessageSignal();
+    void messageSendSignal();
 
 
 private:

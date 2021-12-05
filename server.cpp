@@ -6,9 +6,7 @@
 
 server::server(QObject* parent): QTcpServer(parent)
 {
-    message=new Message();
     printf("server created\n");
-
     bool success=listen(QHostAddress::Any,8520);
 
     if(!success)
@@ -17,15 +15,19 @@ server::server(QObject* parent): QTcpServer(parent)
         return ;
     }
     printf("Ready\n");
+
+    client=new QTcpSocket(this);
+    message=new Message();
 }
 
 void server::incomingConnection(int socketfd){
 
-    client=new QTcpSocket(this);
     client->setSocketDescriptor(socketfd); //소켓드스크립터 설정
 
     printf("New Client from:%s\n",client->peerAddress().toString().toLocal8Bit().data());
     client->write("hello client\n");
+
+    emit connected();
 
     connect(client,SIGNAL(readyRead()),this,SLOT(readyRead()));
 //    connect(client,SIGNAL(disconnected()),this,SLOT(disconnected()));
@@ -45,8 +47,11 @@ void server::readyRead()
 void server::sendMessage(){
     QByteArray dat;
     QDataStream out(&dat, QIODevice::WriteOnly);
-    out<<message;
+    // out<<message;
+    out.writeRawData(reinterpret_cast<const char*>(message),sizeof(*message));
+
     printf("write\n");
-    QTextStream(stdout)<<message;
+//    QTextStream(stdout)<<dat;
+    
     client->write(dat);
 }

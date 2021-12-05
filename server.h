@@ -25,8 +25,8 @@ public slots:
     void sendMessage();
 
 signals:
-    void faster();
-    void slower();
+    void changeVSignal(int);
+    void connected();
 
 private:
     QTcpSocket *client;

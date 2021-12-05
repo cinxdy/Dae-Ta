@@ -66,8 +66,9 @@ public slots:
     void addTable4();
     void addTable5();
     void interruptMoving();
-    void faster();
-    void slower();
+    void changeV(int );
+
+    void timerSet();
 
 
 signals:
