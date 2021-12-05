@@ -17,7 +17,7 @@ server::server(QObject* parent): QTcpServer(parent)
     printf("Ready\n");
 
     client=new QTcpSocket(this);
-    message=new Message();
+    malloc=new Message();
 }
 
 void server::incomingConnection(int socketfd){
@@ -35,20 +35,18 @@ void server::incomingConnection(int socketfd){
 
 void server::readyRead()
 {
-    QTcpSocket* guest=static_cast<QTcpSocket*>(sender()); //메시지가 들어온 클라이언트를 감지하는 함수 sender
-    printf("available:%d\n",guest->canReadLine());
-
-    while(guest->canReadLine()){
-        QString line=QString::fromUtf8(guest->readLine());
-        printf("Read Line:%s\n",line.toLocal8Bit().data());
-    }
+    QByteArray byte = client->readAll();
+    QDataStream read(&byte, QIODevice::ReadOnly);
+    read.readRawData(reinterpret_cast<char *>(&m), sizeof(m));
+    QTextStream(stdout)<<"Got message::velocity:"<<m.velocity<<endl;
+    emit changeVSignal(m.velocity);
 }
 
 void server::sendMessage(){
     QByteArray dat;
     QDataStream out(&dat, QIODevice::WriteOnly);
     // out<<message;
-    out.writeRawData(reinterpret_cast<const char*>(message),sizeof(*message));
+    out.writeRawData(reinterpret_cast<const char*>(&m),sizeof(m));
 
     printf("write\n");
 //    QTextStream(stdout)<<dat;

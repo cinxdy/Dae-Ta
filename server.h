@@ -13,7 +13,7 @@ public:
     server(QObject* parent=0);
 
 //private:
-    Message *message;
+    Message m;;
 
 protected:
     void incomingConnection(int socketfd);

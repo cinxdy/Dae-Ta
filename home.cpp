@@ -17,7 +17,7 @@ Home::Home(QWidget *parent) : QMainWindow(parent),
     t->start();
     t2->start();
 
-    t->battery = 100;
+    t->bettery = 100;
 
     // Server setup
     s = new server();
@@ -50,7 +50,7 @@ Home::Home(QWidget *parent) : QMainWindow(parent),
 
     // UI setup
     ui->setupUi(this);
-    sleep_value=1;
+    // sleep_value=1;
     locationX = 100;
     locationY = 170;
     stateLocation = HOME;
@@ -169,7 +169,7 @@ void Home::servingStart(){
         int mvResult = goToTable(destination);
         if (mvResult)
         {
-            t->battery -= 10;
+            t->bettery -= 10;
             // Hello Message
 
             int retv;
@@ -242,7 +242,7 @@ void Home::goToBellTable()
         int mvResult = goToTable(destination);
         if (mvResult)
         {
-            t->battery -= 10;
+            t->bettery -= 10;
             // Hello Message
             QMediaPlayer* player =new QMediaPlayer;
             player->setMedia(QUrl::fromLocalFile("/home/pi/myQt/Dae-Ta/src/arrived.wav"));
@@ -397,7 +397,7 @@ void Home::interruptMoving()
 void Home::updateMessage()
 {
         s->message->stateLocation=stateLocation;
-        s->message->bettery=t->battery;
+        s->message->bettery=t->bettery;
         s->message->velocity=sleep_value;
         s->message->interrupt=t->r_value;
         s->message->moving=t->m_flag;
