@@ -294,7 +294,7 @@ int Home::goToTable(Location dest)
 //    system("/home/pi/myQt/Dae-Ta/src/mmoving");
 //    system("/home/pi/myQt/Dae-Ta/src/serving");
 
-
+t->w_flag=1;
     t->m_flag=1;
     t2->m_flag=1;
 system("/home/pi/myQt/Dae-Ta/src/mmoving");
@@ -337,6 +337,7 @@ system("/home/pi/myQt/Dae-Ta/src/mmoving");
     {
         ui->lbstateLocation->setText("HOME");
         system("/home/pi/myQt/Dae-Ta/src/home");
+        t->w_flag=0;
 //        system("/home/pi/myQt/Dae-Ta/src/rest");
     }
     else
@@ -405,7 +406,7 @@ void Home::updateMessage()
         s->message->interrupt=t->r_value;
         s->message->moving=t->m_flag;
         s->message->work=t->w_flag;
-        //0=admin, 1= ,
+        //0=rest 1=seving, 2=order,3=admin
 
     emit messageSendSignal();
 }

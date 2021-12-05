@@ -17,7 +17,6 @@ void Thread::run()
     system("/home/pi/myQt/Dae-Ta/src/ldown");
     system("/home/pi/myQt/Dae-Ta/src/cdown");
     system("/home/pi/myQt/Dae-Ta/src/down");
-
     w_flag=0;
     while(true){
         if(m_flag){
