@@ -10,6 +10,10 @@ public:
     QString textmsg;
     int bettery;
     int velocity;
+    int interrupt;
+    int moving;
+    int card;
+    int work;
 };
 
 #endif // MESSAGE_H

@@ -20,12 +20,15 @@ Home::Home(QWidget *parent) : QMainWindow(parent),
     t->battery = 100;
 
 
+    inputTimer = new QTimer(this); // Read from Dev
+    inputTimer->start(500);
+
+       connect(inputTimer, SIGNAL(timeout()),this, SLOT(updateMessage()));
     // Server setup
     s = new server();
-    connect(t, SIGNAL(messageSendSignal()), this, SLOT(updateMessage()));
+//    connect(t, SIGNAL(messageSendSignal()), this, SLOT(updateMessage()));
     connect(this, SIGNAL(messageSendSignal()), s, SLOT(sendMessage()));
-    connect(s, SIGNAL(faster()),this,SLOT(faster()));
-    connect(s, SIGNAL(slower()),this,SLOT(slower()));
+    connect(s, SIGNAL(changeVSignal(int)),this, SLOT(changeV(int)));
 
     // Device setup
     system("sudo echo 0 > /sys/class/gpio/export");
@@ -45,10 +48,6 @@ Home::Home(QWidget *parent) : QMainWindow(parent),
     system("sudo echo in > /sys/class/gpio/gpio5/direction");
     usleep(1000);
 
-     inputTimer = new QTimer(this); // Read from Dev
-     inputTimer->start(500);
-
-    //    connect(inputTimer, SIGNAL(timeout()),this, SLOT(tableBellOrder()));
 
     connect(t, SIGNAL(pushedButton(int)), this, SLOT(addBellTable(int)));
     connect(this, SIGNAL(goToBellTableSignal()),this,SLOT(goToBellTable()));
@@ -397,18 +396,17 @@ void Home::interruptMoving()
 
 void Home::updateMessage()
 {
-        s->message->stateLocation=stateLocation;
-    emit messageSendSignal();
+//        s->message->stateLocation=stateLocation;
+//    emit messageSendSignal();
 }
 
-void Home::faster(){
-    sleep_value/=10;
-    if(sleep_value<1) sleep_value =1;
-}
 
-void Home::slower(){
-    sleep_value*=10;
-    if(sleep_value>10000000) sleep_value =10000000;
+void Home::changeV(int v){
+    int s=100000;
+    for(int i=0;i<v;i++)
+        s/=10;
+    
+    sleep_value=s;
 }
 
 

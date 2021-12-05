@@ -44,7 +44,7 @@ void Thread::run()
 
 
 
-        emit sendMessageSignal();
+//        emit messageSendSignal();
 
     }
 }
