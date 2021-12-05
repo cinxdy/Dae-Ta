@@ -75,30 +75,13 @@ Home::Home(QWidget *parent) : QMainWindow(parent),
     ui->tableServingOrder->setColumnWidth(0, 120);
     ui->tableServingOrder->setColumnWidth(1, 80);
     ui->tableServingOrder->setHorizontalHeaderLabels({"TableNo", "Floor"});
-    ui->tableServingOrder->setStyleSheet("QTableWidget QTableCornerButton::section {"
-                                         "background-color:rgb(187,187,187);"
-                                         "border-image: url(:/transparent.png);"
-                                         "image: url(:/qt-logo.ico);"
-                                         "}");
+
 
     // Bell table
     ui->tableBellOrder->setColumnCount(1);
     ui->tableBellOrder->setColumnWidth(0, 200);
     ui->tableBellOrder->setHorizontalHeaderLabels({"Bell Order"});
-    ui->tableBellOrder->setStyleSheet("QTableWidget QTableCornerButton::section {"
-                                      "background-color:rgb(187,187,187);"
-                                      "border-image: url(:/transparent.png);"
-                                      "image: url(:/qt-logo.ico);"
-                                      "}");
 
-    ui->lbLocation->setStyleSheet("QLabel {"
-                                  "border-color: rgb(66, 69, 183);"
-                                  "border-width: 3px;"
-                                  "border-style: solid;"
-                                  "border-radius: 30px;"
-                                  "margin:10px;"
-                                  // "padding:10px;"
-                                  "}");
 
     m_listCount = 0;
     b_listCount = 0;
@@ -301,12 +284,12 @@ int Home::goToTable(Location dest)
     // table6 690,220
 
     LocationXY *destTable[7];
-    destTable[0] = new LocationXY{170, 170}; // Kitchen
-    destTable[1] = new LocationXY{340, 120};
-    destTable[2] = new LocationXY{515, 120};
-    destTable[3] = new LocationXY{690, 120};
-    destTable[4] = new LocationXY{340, 220};
-    destTable[5] = new LocationXY{602, 220};
+    destTable[0] = new LocationXY{100,170}; // Kitchen
+    destTable[1] = new LocationXY{160,80};
+    destTable[2] = new LocationXY{310,80};
+    destTable[3] = new LocationXY{440,80};
+    destTable[4] = new LocationXY{180,250};
+    destTable[5] = new LocationXY{100,170};
 
     stateLocation = MOVING;
     ui->lbstateLocation->setText("MOVING");

@@ -49,7 +49,6 @@ public:
     QTimer* inputTimer;
     unsigned char getOneByteValueOfExe(int chan);
 
-
 public slots:
     void addTable(int);
     void btnOrderOrServeClicked();
