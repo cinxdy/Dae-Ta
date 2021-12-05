@@ -49,7 +49,7 @@ payment::payment(QWidget *parent) :
  
 }
 
-void payment::addGetItem(int row, int column){
+void payment::addGetItem(int row, int ){
     ui->tableCart->insertRow(m_listCount);
     ui->tableCart->setItem(m_listCount,0,new QTableWidgetItem(tableMenuRows[row]));
     ui->tableCart->setItem(m_listCount,1, new QTableWidgetItem(tableMenuPrices[row]));
@@ -58,7 +58,7 @@ void payment::addGetItem(int row, int column){
 
     updateSum();
 }
-void payment::deleteItem(int row, int column){
+void payment::deleteItem(int row, int ){
     ui->tableCart->removeRow(row);
     m_listCount--;
 

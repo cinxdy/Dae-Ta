@@ -31,13 +31,17 @@ SOURCES += \
     payment.cpp \
     thread.cpp \
     src/pushedButton.c \
-    thread2.cpp
+    thread2.cpp\
+    server.cpp
 
 HEADERS += \
         home.h \
     payment.h \
     thread.h \
-    thread2.h
+    thread2.h\
+    server.h\
+    stateEnum.h
+
 
 FORMS += \
         home.ui \

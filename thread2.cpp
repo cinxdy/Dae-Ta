@@ -5,20 +5,20 @@
 //#include "./src/Bell5.c"
 #include <QTextStream>
 
-qth::qth(QObject *parent):
+Thread2::Thread2(QObject *parent):
     QThread(parent)
 {
 
 }
 
-void qth::run()
+void Thread2::run()
 {
     while(true){
         if(m_flag){
-        QMediaPlayer* player =new QMediaPlayer;
-        player->setMedia(QUrl::fromLocalFile("/home/pi/myQt/Dae-Ta/src/moving.mp3"));
-        player->setVolume(10);
-        player->play();
+            QMediaPlayer* player =new QMediaPlayer;
+            player->setMedia(QUrl::fromLocalFile("/home/pi/myQt/Dae-Ta/src/moving.mp3"));
+            player->setVolume(10);
+            player->play();
             usleep(500000);
 
         }

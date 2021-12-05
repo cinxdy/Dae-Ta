@@ -4,7 +4,7 @@
 #include <QTcpSocket>
 #include <QHostAddress>
 #include <QDataStream>
-#include "home.h"
+#include "stateEnum.h"
 
 class Message{
  int stateLocation;
@@ -30,8 +30,13 @@ private slots:
 public slots:
     void sendMessage();
 
+signals:
+    void faster();
+    void slower();
+
 private:
     QTcpSocket *client;
+
 };
 
 #endif // SOCKET_H

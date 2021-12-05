@@ -2,45 +2,51 @@
 #include "ui_home.h"
 
 Home::Home(QWidget *parent) : QMainWindow(parent),
-                              ui(new Ui::Home)
+    ui(new Ui::Home)
 {
     // Thread setup
     t = new Thread(this);
-    t2=new qth(this);
+    t2= new Thread2(this);
+
     t->m_flag=0;
     t2->m_flag=0;
+
     t->r_value=0;
     connect(t, SIGNAL(goInterrupted()), this, SLOT(interruptMoving()));
     
     t->start();
     t2->start();
 
+    t->battery = 100;
+
 
     // Server setup
     s = new server();
     connect(t, SIGNAL(messageSendSignal()), this, SLOT(updateMessage()));
     connect(this, SIGNAL(messageSendSignal()), s, SLOT(sendMessage()));
+    connect(s, SIGNAL(faster()),this,SLOT(faster()));
+    connect(s, SIGNAL(slower()),this,SLOT(slower()));
 
     // Device setup
-    system("echo 0 > /sys/class/gpio/export");
+    system("sudo echo 0 > /sys/class/gpio/export");
     usleep(1000);
-    system("echo 1 > /sys/class/gpio/export");
+    system("sudo echo 1 > /sys/class/gpio/export");
     usleep(1000);
-    system("echo 4 > /sys/class/gpio/export");
+    system("sudo echo 4 > /sys/class/gpio/export");
     usleep(1000);
-    system("echo 5 > /sys/class/gpio/export");
+    system("sudo echo 5 > /sys/class/gpio/export");
     usleep(1000);
-    system("echo in > /sys/class/gpio/gpio0/direction");
+    system("sudo echo in > /sys/class/gpio/gpio0/direction");
     usleep(1000);
-    system("echo in > /sys/class/gpio/gpio1/direction");
+    system("sudo echo in > /sys/class/gpio/gpio1/direction");
     usleep(1000);
-    system("echo in > /sys/class/gpio/gpio4/direction");
+    system("sudo echo in > /sys/class/gpio/gpio4/direction");
     usleep(1000);
-    system("echo in > /sys/class/gpio/gpio5/direction");
+    system("sudo echo in > /sys/class/gpio/gpio5/direction");
     usleep(1000);
 
-    // inputTimer = new QTimer(this); // Read from Dev
-    // inputTimer->start(500);
+     inputTimer = new QTimer(this); // Read from Dev
+     inputTimer->start(500);
 
     //    connect(inputTimer, SIGNAL(timeout()),this, SLOT(tableBellOrder()));
 
@@ -49,11 +55,10 @@ Home::Home(QWidget *parent) : QMainWindow(parent),
 
     // UI setup
     ui->setupUi(this);
-
+    sleep_value=1;
     locationX = 170;
     locationY = 170;
     stateLocation = HOME;
-    t->battery = 100;
     ui->lbstateLocation->setText("HOME");
 
     destination = HOME;
@@ -111,16 +116,15 @@ Home::Home(QWidget *parent) : QMainWindow(parent),
 
 
 void Home::btnOrderOrServeClicked(){
-
-    QMediaPlayer* player =new QMediaPlayer;
-    player->setMedia(QUrl::fromLocalFile("/home/pi/myQt/Dae-Ta/src/go.wav"));
-    player->setVolume(50);
-    player->play();
-
-    if(stateLocation==HOME) servingStart();
+    if(stateLocation==HOME) {
+        QMediaPlayer* player =new QMediaPlayer;
+        player->setMedia(QUrl::fromLocalFile("/home/pi/myQt/Dae-Ta/src/go.wav"));
+        player->setVolume(50);
+        player->play();
+        servingStart();
+    }
     else if(stateLocation==MOVING) interruptMoving();
     else openPayment();
-
 }
 
 Home::~Home()
@@ -152,17 +156,17 @@ void Home::addTable(int num)
 
 void Home::servingStart(){
 
-//    QMediaPlayer* player =  new QMediaPlayer(this, QMediaPlayer::StreamPlayback);
-//    QFile file("/home/pi/myQt/Dae-Ta/src/letsgo.wav");
-//    file.open(QIODevice::ReadOnly);
-//    QByteArray *ba = new QByteArray();
-//    ba->append(file.readAll());
-//    QBuffer *buffer = new QBuffer(ba);
-//    buffer->open(QIODevice::ReadOnly);
-//    buffer->reset();  // same as buffer.seek(0);
-//    qDebug() << "Buffer size:" << buffer->size(); // is the file loaded
-//    player->setMedia(QMediaContent(), buffer);
-//    player->play();
+    //    QMediaPlayer* player =  new QMediaPlayer(this, QMediaPlayer::StreamPlayback);
+    //    QFile file("/home/pi/myQt/Dae-Ta/src/letsgo.wav");
+    //    file.open(QIODevice::ReadOnly);
+    //    QByteArray *ba = new QByteArray();
+    //    ba->append(file.readAll());
+    //    QBuffer *buffer = new QBuffer(ba);
+    //    buffer->open(QIODevice::ReadOnly);
+    //    buffer->reset();  // same as buffer.seek(0);
+    //    qDebug() << "Buffer size:" << buffer->size(); // is the file loaded
+    //    player->setMedia(QMediaContent(), buffer);
+    //    player->play();
 
 
     QMessageBox msgConfirmBox;
@@ -196,14 +200,19 @@ void Home::servingStart(){
                 player->setMedia(QUrl::fromLocalFile("/home/pi/myQt/Dae-Ta/src/hi.wav"));
                 player->setVolume(30);
                 player->play();
+
                 player->setMedia(QUrl::fromLocalFile("/home/pi/myQt/Dae-Ta/src/food.wav"));
                 player->setVolume(30);
                 player->play();
+
                 retv=msgConfirmBox.warning(this, "Confirm",QString("Hello, Table%1!!\nDid you get your plates?").arg(destination), "No", "Yes");
-                player->setMedia(QUrl::fromLocalFile("/home/pi/myQt/Dae-Ta/src/eat.wav"));
-                player->setVolume(30);
-                player->play();
-                if(retv) break;
+                if(retv){
+                    player->setMedia(QUrl::fromLocalFile("/home/pi/myQt/Dae-Ta/src/eat.wav"));
+                    player->setVolume(30);
+                    player->play();
+
+                    break;
+                }
             }
 
             retv=msgConfirmBox.warning(this, "Confirm",QString("Hello, Table%1!!\nDo you want to order something?").arg(destination), "No", "Yes");
@@ -217,9 +226,6 @@ void Home::servingStart(){
                 }
 
                 openPayment();
-                QEventLoop loop;
-                connect(this, SIGNAL(restart()), &loop, SLOT(quit()));
-                loop.exec();
             }
 
             ui->tableServingOrder->removeRow(0);
@@ -310,34 +316,34 @@ int Home::goToTable(Location dest)
     t2->m_flag=1;
 
     while(true){
-                if(t->r_value) {
-                    stateLocation=INTERRUPTED;
-                    emit interruptMoving_sig();
-//                    interrupted=0;
-                    return 0;
-                }
+        if(t->r_value) {
+            stateLocation=INTERRUPTED;
+            emit interruptMoving_sig();
+            //                    interrupted=0;
+            return 0;
+        }
         if(locationX==destTable[dest]->x) break;
         else if(locationX<destTable[dest]->x) locationX++;
         else locationX--;
         ui->lbLocation->move(locationX,locationY);
         ui->lbLocation->repaint();
+        usleep(sleep_value);
     }
 
     while(true){
-                if(t->r_value) {
-                    stateLocation=INTERRUPTED;
-                    emit interruptMoving_sig();
-//                    interrupted=0;
-//                    break;
-                    return 0;
-                }
-        if(interrupted==0) {
-            if(locationY==destTable[dest]->y) break;
-            else if(locationY<destTable[dest]->y) locationY++;
-            else locationY--;
+        if(t->r_value) {
+            stateLocation=INTERRUPTED;
+            emit interruptMoving_sig();
+            //                    interrupted=0;
+            //                    break;
+            return 0;
         }
+        if(locationY==destTable[dest]->y) break;
+        else if(locationY<destTable[dest]->y) locationY++;
+        else locationY--;
         ui->lbLocation->move(locationX,locationY);
         ui->lbLocation->repaint();
+        usleep(sleep_value);
     }
 
     t->m_flag=0;
@@ -382,7 +388,7 @@ void Home::openPayment()
 {
     p = new payment();
     p->show();
-    this->hide();
+//    this->hide();
 
     QEventLoop loop;
     connect(p, SIGNAL(closePayment()), this, SLOT(openHomeAgain()));
@@ -394,7 +400,7 @@ void Home::openHomeAgain()
 {
     p->hide();
     delete p;
-    this->show();
+//    this->show();
     
     sleep(1);
     emit restart();
@@ -410,6 +416,16 @@ void Home::updateMessage()
 {
     //    s->message->stateLocation=stateLocation;
     emit messageSendSignal();
+}
+
+void Home::faster(){
+    sleep_value/=10;
+    if(sleep_value<1) sleep_value =1;
+}
+
+void Home::slower(){
+    sleep_value*=10;
+    if(sleep_value>10000000) sleep_value =10000000;
 }
 
 

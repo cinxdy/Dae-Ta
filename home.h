@@ -41,23 +41,15 @@ public:
     int locationX;
     int locationY;
     int interrupted;
+    int sleep_value;
     Location stateLocation; // 0:home -1:moving n:tableN
     Location destination;
 
     QMediaPlayer* player;
     QTimer* inputTimer;
     unsigned char getOneByteValueOfExe(int chan);
-    void interruptMoving();
-    void addTable1();
-    void addTable2();
-    void addTable3();
-    void addTable4();
-    void addTable5();
 
-    
-public slots:
-    void addTable(int);
-    
+
 public slots:
     void addTable(int);
     void btnOrderOrServeClicked();
@@ -69,6 +61,14 @@ public slots:
     int goToTable(Location);
     void addBellTable(int);
     void openHomeAgain();
+    void addTable1();
+    void addTable2();
+    void addTable3();
+    void addTable4();
+    void addTable5();
+    void interruptMoving();
+    void faster();
+    void slower();
 
 
 signals:
@@ -80,8 +80,8 @@ signals:
 
 private:
     Ui::Home *ui;
-    Thread* t;
-    qth* t2;
+    Thread *t;
+    Thread2 *t2;
     payment *p;
     server *s;
 };

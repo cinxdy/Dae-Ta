@@ -1,31 +1,20 @@
-#ifndef qth_H
-#define qth_H
+#ifndef THREAD2_H
+#define THREAD2_H
 
 #include<QThread>
 #include<QDebug>
 #include <QtMultimedia>
 #include <QtMultimediaWidgets>
 
-class qth: public QThread
+class Thread2: public QThread
 {
     Q_OBJECT
 public:
     int m_flag;
-   explicit qth(QObject *parent =nullptr);
-
-
-//public slots:
-//    void movingStart();
-
-//signals:
-
-
-
+    explicit Thread2(QObject *parent =nullptr);
 private:
     void run();
 
-
-
 };
 
-#endif // qth_H
+#endif // THREAD2_H
