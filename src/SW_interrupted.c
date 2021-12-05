@@ -72,7 +72,9 @@ int bool_interrupt()
         }
 
 
-        close(fd);
-        return r_value;
     }
+
+
+    close(fd);
+    return r_value;
 }

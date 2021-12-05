@@ -270,8 +270,9 @@ void Home::goToBellTable(){
         else{
             int retv=msgConfirmBox.warning(this, "Confirm",QString("Do you want to go again?"), "No", "Yes");
         }
-        goToTable(HOME);
     }
+
+    goToTable(HOME);
 }
 
 int Home::goToTable(Location dest){
