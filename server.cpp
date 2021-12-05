@@ -46,6 +46,7 @@ void server::sendMessage(){
     QByteArray dat;
     QDataStream out(&dat, QIODevice::WriteOnly);
     out<<message;
-
+    printf("write\n");
+    QTextStream(stdout)<<message;
     client->write(dat);
 }

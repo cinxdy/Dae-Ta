@@ -55,13 +55,13 @@ Home::Home(QWidget *parent) : QMainWindow(parent),
     // UI setup
     ui->setupUi(this);
     sleep_value=1;
-    locationX = 170;
+    locationX = 100;
     locationY = 170;
     stateLocation = HOME;
     ui->lbstateLocation->setText("HOME");
 
     destination = HOME;
-    system("/home/pi/myQt/Dae-Ta/src/ldown");
+//    system("/home/pi/myQt/Dae-Ta/src/ldown");
 
     if (stateLocation == 0)
         ui->btnOrderOrServe->setText("Serve");
@@ -103,6 +103,8 @@ void Home::btnOrderOrServeClicked(){
         player->setMedia(QUrl::fromLocalFile("/home/pi/myQt/Dae-Ta/src/go.wav"));
         player->setVolume(50);
         player->play();
+        system("/home/pi/myQt/Dae-Ta/src/serving");
+         t->w_flag=2;
         servingStart();
     }
     else if(stateLocation==MOVING) interruptMoving();
@@ -292,7 +294,8 @@ int Home::goToTable(Location dest)
 
     stateLocation = MOVING;
     ui->lbstateLocation->setText("MOVING");
-    system("/home/pi/myQt/Dae-Ta/src/mmoving");
+//    system("/home/pi/myQt/Dae-Ta/src/mmoving");
+
 
     t->m_flag=1;
     t2->m_flag=1;
@@ -336,6 +339,7 @@ int Home::goToTable(Location dest)
     {
         ui->lbstateLocation->setText("HOME");
         system("/home/pi/myQt/Dae-Ta/src/home");
+        system("/home/pi/myQt/Dae-Ta/src/rest");
     }
     else
     {
@@ -389,15 +393,22 @@ void Home::openHomeAgain()
 }
 
 void Home::interruptMoving()
-{
+{   system("/home/pi/myQt/Dae-Ta/src/winterrupt");
     ui->lbstateLocation->setText("INTERRUPTED");
     interrupted = 1;
 }
 
 void Home::updateMessage()
 {
-//        s->message->stateLocation=stateLocation;
-//    emit messageSendSignal();
+        s->message->stateLocation=stateLocation;
+//        s->message->bettery=t->battery;
+//        s->message->velocity=sleep_value;
+//        s->message->interrupt=t->r_value;
+//        s->message->moving=t->m_flag;
+//        s->message->work=t->w_flag;
+        //0=admin, 1= ,
+
+    emit messageSendSignal();
 }
 
 

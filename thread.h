@@ -14,6 +14,7 @@ public:
     int m_flag;
     int r_value;
     int battery;
+    int w_flag;
 
 
    explicit Thread(QObject *parent =nullptr);

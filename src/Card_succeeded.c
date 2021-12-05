@@ -41,11 +41,11 @@ read(led_fd,temp_values,8);
 values[1]= 0xFE&temp_values[1];
 write(led_fd,values,2);
 //usleep(1000000); // 100ms
-usleep(1000000);
-
+usleep(800000);
+read(led_fd,temp_values,8);
 values[1]= 0x01|temp_values[1];
 write(led_fd,values,2);
-usleep(1000000);
+usleep(800000);
 }
 
 close(led_fd);
