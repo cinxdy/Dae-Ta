@@ -401,13 +401,13 @@ void Home::interruptMoving()
 
 void Home::updateMessage()
 {
-        s->message->stateLocation=stateLocation;
-        s->message->bettery=t->bettery;
-        s->message->velocity=sleep_value;
+        s->m.stateLocation=stateLocation;
+        s->m.bettery=t->bettery;
+        s->m.velocity=sleep_value;
 //        s->message->interrupt=t->r_value;
-        if(t->r_value) s->message->moving=2;
-        else s->message->moving=t->m_flag;
-        s->message->work=t->w_flag;
+        if(t->r_value) s->m.moving=2;
+        else s->m.moving=t->m_flag;
+        s->m.work=t->w_flag;
         //0=rest 1=seving, 2=order,3=admin
 
     emit messageSendSignal();

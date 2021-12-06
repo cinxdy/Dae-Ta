@@ -17,7 +17,6 @@ server::server(QObject* parent): QTcpServer(parent)
     printf("Ready\n");
 
     client=new QTcpSocket(this);
-    malloc=new Message();
 }
 
 void server::incomingConnection(int socketfd){
