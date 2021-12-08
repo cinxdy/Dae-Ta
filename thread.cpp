@@ -1,9 +1,7 @@
 #include "thread.h"
-// #include "./src/Position_moving2.c"
 #include "./src/SW_interrupted.c"
 #include "./src/pushedButton.c"
 #include "./src/Bell5.c"
-//#include "./src/sw_led.c"
 #include <QTextStream>
 
 Thread::Thread(QObject *parent):

@@ -58,6 +58,7 @@ public slots:
 
     void servingStart();
     int goToTable(Location);
+    void goToHome();
     void addBellTable(int);
     void openHomeAgain();
     void addTable1();
@@ -77,6 +78,8 @@ signals:
     void goToBellTableSignal();
     void interruptMoving_sig();
     void messageSendSignal();
+    void goAgain();
+    void goHome();
 
 private:
     Ui::Home *ui;

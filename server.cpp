@@ -24,7 +24,7 @@ void server::incomingConnection(int socketfd){
     client->setSocketDescriptor(socketfd); //소켓드스크립터 설정
 
     printf("New Client from:%s\n",client->peerAddress().toString().toLocal8Bit().data());
-    client->write("hello client\n");
+    // client->write("hello client\n");
 
     emit connected();
 

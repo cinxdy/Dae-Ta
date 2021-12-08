@@ -13,6 +13,8 @@ Home::Home(QWidget *parent) : QMainWindow(parent),
 
     t->r_value=0;
     connect(t, SIGNAL(goInterrupted()), this, SLOT(interruptMoving()));
+    connect(this, SIGNAL(goAgain()), this, SLOT(servingStart()));
+    connect(this, SIGNAL(goHome()), this, SLOT(goToHome()));
     
     t->start();
     t2->start();
@@ -50,7 +52,7 @@ Home::Home(QWidget *parent) : QMainWindow(parent),
 
     // UI setup
     ui->setupUi(this);
-    // sleep_value=1;
+    sleep_value=1;
     locationX = 100;
     locationY = 170;
     stateLocation = HOME;
@@ -90,7 +92,7 @@ Home::Home(QWidget *parent) : QMainWindow(parent),
 
 
     // Serving Button
-    connect(ui->btnOrderOrServe, SIGNAL(clicked()), this, SLOT(btnOrderOrServeClicked()));
+    connect(ui->btnOrderOrServe, SIGNAL(clicked()), this, SLOT(servingStart()));
 }
 
 
@@ -104,8 +106,8 @@ void Home::btnOrderOrServeClicked(){
          t->w_flag=2;
         servingStart();
     }
-    else if(stateLocation==MOVING) interruptMoving();
-    else openPayment();
+    // else if(stateLocation==MOVING) interruptMoving();
+    // else openPayment();
 
 }
 
@@ -150,6 +152,9 @@ void Home::servingStart(){
     //    player->setMedia(QMediaContent(), buffer);
     //    player->play();
 
+    if(stateLocation==INTERRUPTED&&(ui->tableServingOrder->rowCount() == 0)){
+        goToTable(HOME);
+    }
 
     QMessageBox msgConfirmBox;
 
@@ -216,6 +221,9 @@ void Home::servingStart(){
         else
         {
             int retv = msgConfirmBox.warning(this, "Confirm", QString("Do you want to go again?"), "No", "Yes");
+            if(retv) emit goAgain();
+            else emit goHome();
+            return ;
         }
     }
 
@@ -265,6 +273,8 @@ void Home::goToBellTable()
         else
         {
             int retv = msgConfirmBox.warning(this, "Confirm", QString("Do you want to go again?"), "No", "Yes");
+            if(retv) emit goAgain();
+            else emit goHome();
         }
     }
 
@@ -295,7 +305,7 @@ int Home::goToTable(Location dest)
 //    system("/home/pi/myQt/Dae-Ta/src/mmoving");
 //    system("/home/pi/myQt/Dae-Ta/src/serving");
 
-t->w_flag=1;
+    t->w_flag=1;
     t->m_flag=1;
     t2->m_flag=1;
 system("/home/pi/myQt/Dae-Ta/src/mmoving");
@@ -401,21 +411,22 @@ void Home::interruptMoving()
 
 void Home::updateMessage()
 {
-        s->m.stateLocation=stateLocation;
-        s->m.bettery=t->bettery;
-        s->m.velocity=sleep_value;
-//        s->message->interrupt=t->r_value;
-        if(t->r_value) s->m.moving=2;
-        else s->m.moving=t->m_flag;
-        s->m.work=t->w_flag;
-        //0=rest 1=seving, 2=order,3=admin
+    s->m.stateLocation=stateLocation;
+    s->m.bettery=t->bettery;
+    s->m.velocity=sleep_value;
+    if(t->r_value) s->m.moving=2;
+    else s->m.moving=t->m_flag;
+    s->m.work=t->w_flag;
+    s->m.card=1;
+
+    //0=rest 1=serving, 2=order,3=admin
 
     emit messageSendSignal();
 }
 
 
 void Home::changeV(int v){
-    int s=100000;
+    int s=10000;
     for(int i=0;i<v;i++)
         s/=10;
     
@@ -429,4 +440,8 @@ void Home::timerSet(){
     inputTimer->start(500);
 
     connect(inputTimer, SIGNAL(timeout()),this, SLOT(updateMessage()));
+}
+
+void Home::goToHome(){
+    goToTable(HOME);
 }
