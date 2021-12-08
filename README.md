@@ -35,10 +35,6 @@ socket->connectToHost(QString("192.168.137.141"),8520);
 ### QT creator
 [QT creator](https://www.qt.io/product/development-tools)
 
-## Flow for UI
-
-## Flow for Socket Communication
-
 # License
 Prof. Yunseok Cho (yscho@handong.edu)  
 Jiyoung Shin (21800409@handong.edu)  
